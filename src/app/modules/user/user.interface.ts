@@ -8,7 +8,7 @@ export type TUser = {
   password?: string;
   dateOfBirth: string;
   image: string;
-  mess_id: ObjectId;
+  mess: ObjectId;
 };
 
 export type TUserModel = Model<TUser, Record<string, unknown>>;

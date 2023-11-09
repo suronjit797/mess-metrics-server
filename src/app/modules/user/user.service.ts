@@ -56,7 +56,7 @@ export const loginService = async (payload: LoginPayload): Promise<LoginRes> => 
   };
 };
 export const getProfile_service = async (id: string): Promise<TUser | null> => {
-  const data = await UserModel.findById(id).select({ password: 0 }).populate("mess_id");
+  const data = await UserModel.findById(id).select({ password: 0 }).populate("mess");
   return data;
 };
 

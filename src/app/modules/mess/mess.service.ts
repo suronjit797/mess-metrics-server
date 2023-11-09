@@ -17,7 +17,7 @@ export const create_service = async (
   if (!manager) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
   }
-  if (manager.mess_id) {
+  if (manager.mess) {
     throw new ApiError(httpStatus.BAD_REQUEST, "You are already in a mess");
   }
 
@@ -34,7 +34,7 @@ export const create_service = async (
     const data = await MessModel.create([newMess], { session });
 
     // update user
-    const updateUserBody = { mess_id: data[0]._id, role: userRole.manager };
+    const updateUserBody = { mess: data[0]._id, role: userRole.manager };
     await UserModel.findByIdAndUpdate(user.userId, updateUserBody, { new: true, session });
 
     await session.commitTransaction();
