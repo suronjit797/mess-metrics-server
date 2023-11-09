@@ -13,5 +13,6 @@ messRouter.post("/", auth(), validatorMiddleware(createMessZod), messController.
 messRouter.get("/:id", auth(), messController.getSingle);
 messRouter.put("/:id", auth(admin, manager, viceManager), validatorMiddleware(updateMessZod), messController.update);
 messRouter.delete("/:id", auth(admin, manager), messController.remove);
+messRouter.post("/delete-many", messController.removeMany);
 
 export default messRouter;

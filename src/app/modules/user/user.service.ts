@@ -38,7 +38,6 @@ export const loginService = async (payload: LoginPayload): Promise<LoginRes> => 
   }
 
   const match = await bcrypt.compare(payload.password, isExist.password as string);
-  console.log({ match });
 
   if (!match) {
     throw new ApiError(httpStatus.UNAUTHORIZED, "User and password not matched");
@@ -57,7 +56,7 @@ export const loginService = async (payload: LoginPayload): Promise<LoginRes> => 
   };
 };
 export const getProfile_service = async (id: string): Promise<TUser | null> => {
-  const data = await UserModel.findById(id).select({ password: 0 });
+  const data = await UserModel.findById(id).select({ password: 0 }).populate("mess_id");
   return data;
 };
 

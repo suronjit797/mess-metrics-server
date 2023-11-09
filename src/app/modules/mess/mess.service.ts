@@ -12,18 +12,19 @@ export const create_service = async (
   body: Partial<TMess>,
   user: CustomJwtPayload | JwtPayload
 ): Promise<TMess | null> => {
+  // check if already in mess
+  const manager = await UserModel.findById(user.userId);
+  if (!manager) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
+  }
+  if (manager.mess_id) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "You are already in a mess");
+  }
+
   const session = await UserModel.startSession();
   session.startTransaction();
 
   try {
-    const manager = await UserModel.findById(user.userId).session(session);
-    if (!manager) {
-      throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
-    }
-    if (manager.mess_id) {
-      throw new ApiError(httpStatus.BAD_REQUEST, "You are already in a mess");
-    }
-
     const newMess = {
       name: body.name,
       manager_id: user.userId,
@@ -43,7 +44,7 @@ export const create_service = async (
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error");
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
   }
 };
 
@@ -63,5 +64,10 @@ export const update_service = async (id: string, payload: TMess): Promise<TMess 
 };
 export const remove_service = async (id: string): Promise<TMess | null> => {
   const data = await MessModel.findByIdAndDelete(id);
+  return data;
+};
+
+export const removeMany_service = async (ids: string[]): Promise<any> => {
+  const data = await MessModel.deleteMany(ids);
   return data;
 };

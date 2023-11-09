@@ -9,7 +9,6 @@ import MessModel from "./mess.model";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
-    console.log('mess controller')
     const data = await messService.create_service(req.body, req.user);
 
     if (!data) {
@@ -88,6 +87,21 @@ export const update: RequestHandler = async (req, res, next) => {
 export const remove: RequestHandler = async (req, res, next) => {
   try {
     const data = await messService.remove_service(req.params.id);
+
+    const payload = {
+      success: true,
+      message: "Mess Deleted successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeMany: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await messService.removeMany_service(req.body?.ids);
 
     const payload = {
       success: true,

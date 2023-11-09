@@ -13,7 +13,6 @@ process.on("uncaughtException", (error) => {
 import { errorLogger, successLogger } from "./shared/logger";
 
 const bootFunctions = async () => {
-  console.log("data");
   try {
     if (!config.PORT) {
       return errorLogger("Port is not found");
