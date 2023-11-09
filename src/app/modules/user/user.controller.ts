@@ -1,16 +1,12 @@
 import { RequestHandler } from "express";
 import * as userService from "./user.service";
 import sendResponse from "../../../shared/sendResponse";
-import { TPayload } from "../../../interfaces/responseInterface";
 import httpStatus from "http-status";
-import { TUser } from "./user.interface";
-import pic from "../../../shared/pick";
-import { paginationOptionArr } from "../../../constants/pagination";
 import ApiError from "../../../ApiError";
 import config from "../../../config";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
-import TUserModel from "./user.model";
+import UserModel from "./user.model";
 import { userRole } from "../../../constants/userConstants";
 
 // auth
