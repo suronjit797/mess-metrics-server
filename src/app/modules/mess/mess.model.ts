@@ -1,8 +1,7 @@
 import { Schema, model } from "mongoose";
 import { TMess, TMessModel } from "./mess.interface";
-import { userRole } from "../../../constants/userConstants";
 
-const userSchema = new Schema<TMess>(
+const messSchema = new Schema<TMess>(
   {
     name: {
       type: String,
@@ -11,21 +10,22 @@ const userSchema = new Schema<TMess>(
     active_month: {
       type: Schema.Types.ObjectId,
       ref: "Month",
+    },
+    manager_id: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
-    manager_id:{
-      type: Schema.Types.ObjectId,
-      ref: "Month",
-      required: true,
-    },
-    members: [{
-      type: Schema.Types.ObjectId,
-      ref: "Month",
-    }]
+    members: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );
 
-const MessModel = model<TMess, TMessModel>("Mess", userSchema);
+const MessModel = model<TMess, TMessModel>("Mess", messSchema);
 
 export default MessModel;

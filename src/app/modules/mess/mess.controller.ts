@@ -1,71 +1,16 @@
 import { RequestHandler } from "express";
-import * as userService from "./mess.service";
+import * as messService from "./mess.service";
 import sendResponse from "../../../shared/sendResponse";
-import { TPayload } from "../../../interfaces/responseInterface";
 import httpStatus from "http-status";
-import { TMess } from "./mess.interface";
-import pic from "../../../shared/pick";
-import { paginationOptionArr } from "../../../constants/pagination";
 import ApiError from "../../../ApiError";
-import config from "../../../config";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
-import TMessModel from "./mess.model";
-import { userRole } from "../../../constants/userConstants";
+import MessModel from "./mess.model";
 
-// auth
-export const createUser: RequestHandler = async (req, res, next) => {
+export const create: RequestHandler = async (req, res, next) => {
   try {
-    const data = await userService.createUserService(req.body);
-
-    if (!data) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "User Create Failed");
-    }
-
-    data.password = undefined;
-
-    const payload = {
-      success: true,
-      message: "User created successfully",
-      data,
-    };
-    return sendResponse(res, httpStatus.CREATED, payload);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const loginUser: RequestHandler = async (req, res, next) => {
-  try {
-    const data = await userService.loginService(req.body);
-
-    if (!data) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "User Create Failed");
-    }
-
-    const { accessToken, refreshToken } = data;
-
-    const cookieOptions = {
-      secure: config.NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: 365 * 24 * 60 * 60 * 1000,
-    };
-
-    res.cookie("refreshToken", refreshToken, cookieOptions);
-
-    return res.status(httpStatus.OK).send({
-      success: true,
-      message: "User login successfully",
-      token: accessToken,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getProfile: RequestHandler = async (req, res, next) => {
-  try {
-    const data = await userService.getProfile_service(req.user.userId);
+    console.log('mess controller')
+    const data = await messService.create_service(req.body, req.user);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -73,7 +18,7 @@ export const getProfile: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "User fetched successfully",
+      message: "Mess created successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -82,12 +27,11 @@ export const getProfile: RequestHandler = async (req, res, next) => {
   }
 };
 
-// user
 export const getAll: RequestHandler = async (req, res, next) => {
   try {
     const pagination = paginationHelper(req.query);
-    const filter = filterHelper(req, new UserModel(), ["name", "email"]);
-    const { data, meta } = await userService.getAll_service(pagination, filter);
+    const filter = filterHelper(req, new MessModel(), ["name"]);
+    const { data, meta } = await messService.getAll_service(pagination, filter);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -95,7 +39,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Users fetched successfully",
+      message: "Mess fetched successfully",
       meta,
       data,
     };
@@ -107,7 +51,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
 export const getSingle: RequestHandler = async (req, res, next) => {
   try {
-    const data = await userService.getSingle_service(req.params.id);
+    const data = await messService.getSingle_service(req.params.id);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -115,7 +59,7 @@ export const getSingle: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "User fetched successfully",
+      message: "Mess fetched successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -126,23 +70,13 @@ export const getSingle: RequestHandler = async (req, res, next) => {
 
 export const update: RequestHandler = async (req, res, next) => {
   try {
-    const user = await UserModel.findById(req.params.id);
+    const Mess = await MessModel.findById(req.params.id);
 
-    let data;
-
-    if (req.user.role === userRole.admin || req.user.role === userRole.superAdmin || user) {
-      data = await userService.update_service(req.params.id, req.body);
-    } else {
-      throw new ApiError(httpStatus.UNAUTHORIZED, "You are not allowed to perform this action");
-    }
-
-    if (!data) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
-    }
+    let data = await messService.update_service(req.params.id, req.body);
 
     const payload = {
       success: true,
-      message: "User Updated successfully",
+      message: "Mess Updated successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -153,11 +87,11 @@ export const update: RequestHandler = async (req, res, next) => {
 
 export const remove: RequestHandler = async (req, res, next) => {
   try {
-    const data = await userService.remove_service(req.params.id);
+    const data = await messService.remove_service(req.params.id);
 
     const payload = {
       success: true,
-      message: "User Deleted successfully",
+      message: "Mess Deleted successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);

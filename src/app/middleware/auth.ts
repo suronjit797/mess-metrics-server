@@ -5,7 +5,7 @@ import { CustomJwtPayload } from "../../shared/globalInterfaces";
 import ApiError from "../../ApiError";
 import { userRole } from "../../constants/userConstants";
 import jwt from "jsonwebtoken";
-import TUserModel from "../modules/user/user.model";
+import UserModel from "../modules/user/user.model";
 
 export const auth =
   (...roles: string[]): RequestHandler =>
