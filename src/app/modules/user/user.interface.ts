@@ -1,6 +1,6 @@
 import { Model } from "mongoose";
 
-export type IUser = {
+export type TUser = {
   name: string;
   email: string;
   phone: string;
@@ -10,4 +10,4 @@ export type IUser = {
   image: string;
 };
 
-export type UserModel = Model<IUser, Record<string, unknown>>;
+export type TUserModel = Model<TUser, Record<string, unknown>>;

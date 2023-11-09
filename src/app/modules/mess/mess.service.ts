@@ -1,9 +1,11 @@
 import httpStatus from "http-status";
 import ApiError from "../../../ApiError";
 import config from "../../../config";
-import { TUser } from "./user.interface";
-import UserModel from "./user.model";
+import { paginationHelper } from "../../../helper/paginationHelper";
+import { IUser } from "./user.interface";
+import IMessModel from "./mess.model";
 import bcrypt from "bcrypt";
+import { generateUserId } from "./user.utils";
 import jwt from "jsonwebtoken";
 import { IPagination } from "../../../shared/globalInterfaces";
 
@@ -14,7 +16,7 @@ type LoginPayload = {
 type LoginRes = { accessToken: string; refreshToken: string };
 
 // auth
-export const createUserService = async (user: TUser): Promise<TUser | null> => {
+export const createUserService = async (user: IUser): Promise<IUser | null> => {
   const isExist = await UserModel.findOne({ email: user.email });
   if (isExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User already exists");
@@ -56,7 +58,7 @@ export const loginService = async (payload: LoginPayload): Promise<LoginRes> => 
     refreshToken,
   };
 };
-export const getProfile_service = async (id: string): Promise<TUser | null> => {
+export const getProfile_service = async (id: string): Promise<IUser | null> => {
   const data = await UserModel.findById(id).select({ password: 0 });
   return data;
 };
@@ -68,15 +70,15 @@ export const getAll_service = async (pagination: IPagination, filter: any): Prom
   const total = await UserModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };
-export const getSingle_service = async (id: string): Promise<TUser | null> => {
+export const getSingle_service = async (id: string): Promise<IUser | null> => {
   const data = await UserModel.findById(id).select({ password: 0 });
   return data;
 };
-export const update_service = async (id: string, payload: TUser): Promise<TUser | null> => {
+export const update_service = async (id: string, payload: IUser): Promise<IUser | null> => {
   const data = await UserModel.findByIdAndUpdate(id, payload, { new: true });
   return data;
 };
-export const remove_service = async (id: string): Promise<TUser | null> => {
+export const remove_service = async (id: string): Promise<IUser | null> => {
   const data = await UserModel.findByIdAndDelete(id);
   return data;
 };

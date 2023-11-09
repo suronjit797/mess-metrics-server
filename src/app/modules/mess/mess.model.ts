@@ -1,8 +1,8 @@
 import { Schema, model } from "mongoose";
-import { TUser, TUserModel } from "./user.interface";
+import { IMess, IMessModel } from "./mess.interface";
 import { userRole } from "../../../constants/userConstants";
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<IMess>(
   {
     name: {
       type: String,
@@ -37,6 +37,6 @@ const userSchema = new Schema<TUser>(
   { timestamps: true }
 );
 
-const UserModel = model<TUser, TUserModel>("User", userSchema);
+const UserModel = model<IMess, IMessModel>("User", userSchema);
 
-export default UserModel;
+export default IMessModel;
