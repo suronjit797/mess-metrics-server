@@ -1,10 +1,10 @@
 import { Model, ObjectId } from "mongoose";
 
-export type IMess = {
+export type TMess = {
   name: string;
   members: ObjectId[];
   manager_id: ObjectId;
   active_month: ObjectId;
 };
 
-export type IMessModel = Model<IMess, Record<string, unknown>>;
+export type TMessModel = Model<TMess, Record<string, unknown>>;

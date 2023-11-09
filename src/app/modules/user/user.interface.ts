@@ -1,4 +1,4 @@
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 
 export type TUser = {
   name: string;
@@ -8,6 +8,7 @@ export type TUser = {
   password?: string;
   dateOfBirth: string;
   image: string;
+  mess_id: ObjectId;
 };
 
 export type TUserModel = Model<TUser, Record<string, unknown>>;

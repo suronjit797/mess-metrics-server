@@ -3,14 +3,14 @@ import * as userService from "./mess.service";
 import sendResponse from "../../../shared/sendResponse";
 import { TPayload } from "../../../interfaces/responseInterface";
 import httpStatus from "http-status";
-import { IMess } from "./mess.interface";
+import { TMess } from "./mess.interface";
 import pic from "../../../shared/pick";
 import { paginationOptionArr } from "../../../constants/pagination";
 import ApiError from "../../../ApiError";
 import config from "../../../config";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
-import IMessModel from "./mess.model";
+import TMessModel from "./mess.model";
 import { userRole } from "../../../constants/userConstants";
 
 // auth

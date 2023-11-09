@@ -3,7 +3,7 @@ import ApiError from "../../../ApiError";
 import config from "../../../config";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import { IUser } from "./user.interface";
-import IMessModel from "./mess.model";
+import TMessModel from "./mess.model";
 import bcrypt from "bcrypt";
 import { generateUserId } from "./user.utils";
 import jwt from "jsonwebtoken";

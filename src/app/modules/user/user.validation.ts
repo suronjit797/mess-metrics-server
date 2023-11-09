@@ -10,6 +10,7 @@ export const userCreateValidationZod = z.object({
     password: z.string(),
     dateOfBirth: z.string(),
     image: z.string().optional(),
+    mess_id: z.string().optional(),
   }),
 });
 
@@ -29,5 +30,6 @@ export const userUpdateValidationZod = z.object({
     password: z.string().optional(),
     dateOfBirth: z.string().optional(),
     image: z.string().optional(),
+    mess_id: z.string().optional(),
   }),
 });

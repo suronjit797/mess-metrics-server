@@ -33,6 +33,10 @@ const userSchema = new Schema<TUser>(
     image: {
       type: String,
     },
+    mess_id: {
+      type: Schema.Types.ObjectId,
+      ref: "Mess",
+    },
   },
   { timestamps: true }
 );

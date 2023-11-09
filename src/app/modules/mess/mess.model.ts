@@ -1,42 +1,31 @@
 import { Schema, model } from "mongoose";
-import { IMess, IMessModel } from "./mess.interface";
+import { TMess, TMessModel } from "./mess.interface";
 import { userRole } from "../../../constants/userConstants";
 
-const userSchema = new Schema<IMess>(
+const userSchema = new Schema<TMess>(
   {
     name: {
       type: String,
       required: true,
     },
-    email: {
-      type: String,
+    active_month: {
+      type: Schema.Types.ObjectId,
+      ref: "Month",
       required: true,
     },
-    phone: {
-      type: String,
+    manager_id:{
+      type: Schema.Types.ObjectId,
+      ref: "Month",
       required: true,
     },
-
-    role: {
-      type: String,
-      enum: Object.values(userRole),
-      default: "member",
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    dateOfBirth: {
-      type: String,
-      required: true,
-    },
-    image: {
-      type: String,
-    },
+    members: [{
+      type: Schema.Types.ObjectId,
+      ref: "Month",
+    }]
   },
   { timestamps: true }
 );
 
-const UserModel = model<IMess, IMessModel>("User", userSchema);
+const MessModel = model<TMess, TMessModel>("Mess", userSchema);
 
-export default IMessModel;
+export default MessModel;
