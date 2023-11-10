@@ -86,13 +86,14 @@ export const removeMember_service = async (id: string, membersIds: string[]): Pr
     throw new ApiError(httpStatus.NOT_FOUND, "Mess not found");
   }
 
-  const manager = await UserModel.find({ _id: { $in: membersIds }, role: userRole.manager });
+  const user = await UserModel.find({ _id: { $in: membersIds }, role: userRole.manager });
 
-  if (manager?.length) {
+  if (user?.length) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Manager cannot be removed");
   }
   await UserModel.updateMany({ _id: membersIds }, { mess: "" });
   const data = await MessModel.findByIdAndUpdate(id, { $pull: { members: { $in: membersIds } } }, { new: true });
+  await PhoneBookModel.deleteMany({ user: membersIds });
   return data;
 };
 
