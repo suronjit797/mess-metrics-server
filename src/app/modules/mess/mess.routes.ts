@@ -11,7 +11,7 @@ const { admin, manager, member, viceManager } = userRole;
 messRouter.get("/", auth(), messController.getAll);
 messRouter.post("/", auth(member, manager), validatorMiddleware(createMessZod), messController.create);
 messRouter.post("/delete-many", messController.removeMany);
-messRouter.post(
+messRouter.put(
   "/change-manager/:id",
   validatorMiddleware(changeManagerZod),
   auth(admin, manager),
