@@ -3,7 +3,7 @@ import { Model, ObjectId } from "mongoose";
 export type TMess = {
   name: string;
   members: ObjectId[];
-  manager_id: ObjectId;
+  manager: ObjectId;
   active_month: ObjectId;
 };
 

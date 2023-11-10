@@ -11,7 +11,7 @@ const messSchema = new Schema<TMess>(
       type: Schema.Types.ObjectId,
       ref: "Month",
     },
-    manager_id: {
+    manager: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,

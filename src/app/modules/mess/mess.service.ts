@@ -27,7 +27,7 @@ export const create_service = async (
   try {
     const newMess = {
       name: body.name,
-      manager_id: user.userId,
+      manager: user.userId,
       members: [user.userId],
     };
 
@@ -56,7 +56,7 @@ export const getAll_service = async (pagination: IPagination, filter: any): Prom
 };
 export const getSingle_service = async (id: string): Promise<TMess | null> => {
   const data = await MessModel.findById(id).populate([
-    { path: "manager_id", select: "-password" },
+    { path: "manager", select: "-password" },
     { path: "members", select: "-password" },
   ]);
   return data;
@@ -87,6 +87,7 @@ export const removeMember_service = async (id: string, membersIds: string[]): Pr
   if (manager?.length) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Manager cannot be removed");
   }
+  await UserModel.updateMany({ _id: membersIds }, { mess: "" });
   const data = await MessModel.findByIdAndUpdate(id, { $pull: { members: { $in: membersIds } } }, { new: true });
   return data;
 };
@@ -138,6 +139,6 @@ export const changeManager_service = async (
 
   await UserModel.findByIdAndUpdate(managerId, { role: userRole.member });
   await UserModel.findByIdAndUpdate(newManagerId, { role: userRole.manager });
-  const data = await MessModel.findByIdAndUpdate(messId, { manager_id: newManagerId }, { new: true });
+  const data = await MessModel.findByIdAndUpdate(messId, { manager: newManagerId }, { new: true });
   return data;
 };
