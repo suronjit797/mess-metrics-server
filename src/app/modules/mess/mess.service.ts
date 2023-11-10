@@ -7,6 +7,7 @@ import moment from "moment";
 import { JwtPayload } from "jsonwebtoken";
 import UserModel from "../user/user.model";
 import { userRole } from "../../../constants/userConstants";
+import PhoneBookModel from "../phoneBook/phoneBook.model";
 
 export const create_service = async (
   body: Partial<TMess>,
@@ -36,6 +37,9 @@ export const create_service = async (
     // update user
     const updateUserBody = { mess: data[0]._id, role: userRole.manager };
     await UserModel.findByIdAndUpdate(user.userId, updateUserBody, { new: true, session });
+
+    const newPhoneBook = { user: manager._id, name: manager.name, phone: manager.phone, mess: data[0]._id };
+    await PhoneBookModel.create([newPhoneBook], { session });
 
     await session.commitTransaction();
     session.endSession();
@@ -108,7 +112,16 @@ export const addMember_service = async (id: string, memberId: string): Promise<T
   }
 
   await UserModel.findByIdAndUpdate(memberId, { mess: id });
+
   const data = await MessModel.findByIdAndUpdate(id, { $push: { members: memberId } }, { new: true });
+
+  if (!data) {
+    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
+  }
+
+  const newPhoneBook = { user: member._id, name: member.name, phone: member.phone, mess: data._id };
+  await PhoneBookModel.create(newPhoneBook);
+
   return data;
 };
 
