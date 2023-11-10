@@ -50,12 +50,15 @@ export const create_service = async (
 
 export const getAll_service = async (pagination: IPagination, filter: any): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
-  const data = await MessModel.find(filter).limit(limit).skip(skip).sort(sortCondition).select({ password: 0 });
+  const data = await MessModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
   const total = await MessModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };
 export const getSingle_service = async (id: string): Promise<TMess | null> => {
-  const data = await MessModel.findById(id).select({ password: 0 });
+  const data = await MessModel.findById(id).populate([
+    { path: "manager_id", select: "-password" },
+    { path: "members", select: "-password" },
+  ]);
   return data;
 };
 export const update_service = async (id: string, payload: TMess): Promise<TMess | null> => {
@@ -69,5 +72,72 @@ export const remove_service = async (id: string): Promise<TMess | null> => {
 
 export const removeMany_service = async (ids: string[]): Promise<any> => {
   const data = await MessModel.deleteMany(ids);
+  return data;
+};
+
+export const removeMember_service = async (id: string, membersIds: string[]): Promise<any> => {
+  const isMessExist = await MessModel.findById(id);
+
+  if (!isMessExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Mess not found");
+  }
+
+  const manager = await UserModel.find({ _id: { $in: membersIds }, role: userRole.manager });
+
+  if (manager?.length) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Manager cannot be removed");
+  }
+  const data = await MessModel.findByIdAndUpdate(id, { $pull: { members: { $in: membersIds } } }, { new: true });
+  return data;
+};
+
+export const addMember_service = async (id: string, memberId: string): Promise<TMess | null> => {
+  const isMessExist = await MessModel.findById(id);
+
+  if (!isMessExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Mess not found");
+  }
+  const member = await UserModel.findById(memberId);
+
+  if (!member) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Member not found");
+  }
+  if (member?.mess) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Member already in a mess");
+  }
+
+  await UserModel.findByIdAndUpdate(memberId, { mess: id });
+  const data = await MessModel.findByIdAndUpdate(id, { $push: { members: memberId } }, { new: true });
+  return data;
+};
+
+export const changeManager_service = async (
+  messId: string,
+  managerId: string,
+  newManagerId: string
+): Promise<TMess | null> => {
+  const isMessExist = await MessModel.findById(messId);
+  if (!isMessExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Mess not found");
+  }
+
+  const managerExist = await UserModel.findById(managerId);
+  if (!managerExist || managerExist.role !== userRole.manager) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Manager not found");
+  }
+
+  const newManagerExist = await UserModel.findById(newManagerId);
+  if (!newManagerExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "New Manager not found");
+  }
+
+  const isNewManagerInMess = await MessModel.find({ _id: messId, members: { $in: newManagerId } });
+  if (!isNewManagerInMess?.length) {
+    throw new ApiError(httpStatus.NOT_FOUND, "New Manager is not exist in your mess");
+  }
+
+  await UserModel.findByIdAndUpdate(managerId, { role: userRole.member });
+  await UserModel.findByIdAndUpdate(newManagerId, { role: userRole.manager });
+  const data = await MessModel.findByIdAndUpdate(messId, { manager_id: newManagerId }, { new: true });
   return data;
 };

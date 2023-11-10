@@ -113,3 +113,48 @@ export const removeMany: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const removeMembers: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await messService.removeMember_service(req.params.id, req.body?.ids);
+
+    const payload = {
+      success: true,
+      message: "Member remove successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addMembers: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await messService.addMember_service(req.params.id, req.body?.id);
+
+    const payload = {
+      success: true,
+      message: "Member add successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+export const changeManager: RequestHandler = async (req, res, next) => {
+  const { managerId, newManagerId } = req.body;
+  try {
+    const data = await messService.changeManager_service(req.params.id, managerId, newManagerId);
+
+    const payload = {
+      success: true,
+      message: "Manager changed successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};

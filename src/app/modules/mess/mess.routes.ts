@@ -3,16 +3,26 @@ import * as messController from "./mess.controller";
 import { validatorMiddleware } from "../../middleware/validatorMiddleware";
 import { auth } from "../../middleware/auth";
 import { userRole } from "../../../constants/userConstants";
-import { createMessZod, updateMessZod } from "./mess.validation";
+import { addMemberZod, changeManagerZod, createMessZod, removeMemberZod, updateMessZod } from "./mess.validation";
 
 const messRouter = express.Router();
 const { admin, manager, member, viceManager } = userRole;
 
-messRouter.get("/", auth(admin), messController.getAll);
+messRouter.get("/", auth(), messController.getAll);
 messRouter.post("/", auth(), validatorMiddleware(createMessZod), messController.create);
+messRouter.post("/delete-many", messController.removeMany);
+messRouter.post("/change-manager/:id", validatorMiddleware(changeManagerZod), messController.changeManager);
+
+messRouter.post(
+  "/remove-members/:id",
+  auth(admin, manager),
+  validatorMiddleware(removeMemberZod),
+  messController.removeMembers
+);
+messRouter.post("/add-member/:id", auth(admin, manager), validatorMiddleware(addMemberZod), messController.addMembers);
+
 messRouter.get("/:id", auth(), messController.getSingle);
 messRouter.put("/:id", auth(admin, manager, viceManager), validatorMiddleware(updateMessZod), messController.update);
 messRouter.delete("/:id", auth(admin, manager), messController.remove);
-messRouter.post("/delete-many", messController.removeMany);
 
 export default messRouter;
