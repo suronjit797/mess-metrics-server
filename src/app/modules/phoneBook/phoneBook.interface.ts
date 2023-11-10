@@ -2,7 +2,7 @@ import { Model, ObjectId } from "mongoose";
 
 export type TPhoneBook = {
   name: string;
-  number: string;
+  phone: string;
   mess: ObjectId;
   user: ObjectId;
 };

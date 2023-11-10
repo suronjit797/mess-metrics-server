@@ -4,7 +4,6 @@ export const createMessZod = z.object({
   body: z
     .object({
       name: z.string(),
-      month: z.string(),
     })
     .strict(),
 });

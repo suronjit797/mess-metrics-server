@@ -1,4 +1,4 @@
-import { SortOrder } from "mongoose";
+import { ObjectId, SortOrder } from "mongoose";
 
 export type IErrorMessages = {
   path: string | number;
@@ -34,8 +34,13 @@ export interface CustomJwtPayload {
   role?: string;
   iat?: string;
   exp?: string;
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  dateOfBirth: string;
+  image: string;
+  mess: ObjectId;
 }
 
-export type ISortCondition = { [key: string]: SortOrder }
-
-
+export type ISortCondition = { [key: string]: SortOrder };

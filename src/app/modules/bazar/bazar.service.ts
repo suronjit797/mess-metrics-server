@@ -1,15 +1,18 @@
 import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
-import MessModel from "./mess.model";
-import { TMess } from "./mess.interface";
+import MessModel from "./bazar.model";
+import { TMess } from "./bazar.interface";
 import ApiError from "../../../ApiError";
 import httpStatus from "http-status";
+import moment from "moment";
 import { JwtPayload } from "jsonwebtoken";
 import UserModel from "../user/user.model";
 import { userRole } from "../../../constants/userConstants";
 import PhoneBookModel from "../phoneBook/phoneBook.model";
-import MonthModel from "../month/month.model";
 
-export const create_service = async (body: any, user: CustomJwtPayload | JwtPayload): Promise<TMess | null> => {
+export const create_service = async (
+  body: Partial<TMess>,
+  user: CustomJwtPayload | JwtPayload
+): Promise<TMess | null> => {
   // check if already in mess
   const manager = await UserModel.findById(user.userId);
   if (!manager) {
@@ -32,21 +35,17 @@ export const create_service = async (body: any, user: CustomJwtPayload | JwtPayl
       members: [user.userId],
     };
 
-    // create mess
     const data = await MessModel.create([newMess], { session });
-
-    // create month
-    await MonthModel.create([{ name: body.month, mess: data[0]._id }]);
 
     // update user
     const updateUserBody = { mess: data[0]._id, role: userRole.manager };
     await UserModel.findByIdAndUpdate(user.userId, updateUserBody, { new: true, session });
 
-    // add in phone book
-    const newPhoneBook = { user: manager._id, name: manager.name, phone: manager.phone, mess: data[0]._id };
+    const newPhoneBook = { user: manager._id, name: manager.name, number: manager.phone, mess: data[0]._id };
+    console.log(newPhoneBook);
     await PhoneBookModel.create([newPhoneBook], { session });
+    console.log(newPhoneBook);
 
-    // commit transaction
     await session.commitTransaction();
     session.endSession();
 
@@ -54,6 +53,7 @@ export const create_service = async (body: any, user: CustomJwtPayload | JwtPayl
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
+    // throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
     throw new Error(error as "string | undefined");
   }
 };
@@ -129,7 +129,7 @@ export const addMember_service = async (
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
   }
 
-  const newPhoneBook = { user: member._id, name: member.name, phone: member.phone, mess: data._id };
+  const newPhoneBook = { user: member._id, name: member.name, number: member.phone, mess: data._id };
   await PhoneBookModel.create(newPhoneBook);
 
   return data;

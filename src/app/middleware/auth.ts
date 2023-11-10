@@ -27,7 +27,7 @@ export const auth =
         throw new ApiError(httpStatus.FORBIDDEN, `Unauthorized Access`);
       }
 
-      req.user = { userId: decoded.userId, role: isExist.role };
+      req.user = { userId: decoded.userId, ...isExist };
       next();
     } catch (error) {
       next(error);

@@ -1,8 +1,15 @@
-import { IPagination } from "../../../shared/globalInterfaces";
+import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
 import PhoneBookModel from "./phoneBook.model";
 import { TPhoneBook } from "./phoneBook.interface";
+import { JwtPayload } from "jsonwebtoken";
 
-export const create_service = async (body: Partial<TPhoneBook>): Promise<TPhoneBook | null> => {
+export const create_service = async (
+  payload: TPhoneBook,
+  user: CustomJwtPayload | JwtPayload
+): Promise<TPhoneBook | null> => {
+  const body = { ...payload, mess: user.mess };
+  
+
   const data = await PhoneBookModel.create(body);
   return data;
 };

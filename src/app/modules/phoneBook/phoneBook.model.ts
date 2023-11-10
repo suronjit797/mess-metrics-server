@@ -7,14 +7,14 @@ const phoneBookSchema = new Schema<TPhoneBook>(
       type: String,
       required: true,
     },
-    number: {
+    phone: {
       type: String,
       required: true,
     },
-
     mess: {
       type: Schema.Types.ObjectId,
       ref: "Mess",
+      required: true,
     },
     user: {
       type: Schema.Types.ObjectId,

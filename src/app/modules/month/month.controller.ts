@@ -1,15 +1,15 @@
 import { RequestHandler } from "express";
-import * as phoneBookService from "./phoneBook.service";
+import * as monthService from "./month.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import ApiError from "../../../ApiError";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
-import PhoneBookModel from "./phoneBook.model";
+import MonthModel from "./month.model";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
-    const data = await phoneBookService.create_service(req.body, req.user);
+    const data = await monthService.create_service(req.body);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -17,7 +17,7 @@ export const create: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Phone Book created successfully",
+      message: "Month created successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -29,8 +29,8 @@ export const create: RequestHandler = async (req, res, next) => {
 export const getAll: RequestHandler = async (req, res, next) => {
   try {
     const pagination = paginationHelper(req.query);
-    const filter = filterHelper(req, new PhoneBookModel(), ["name", "phone"]);
-    const { data, meta } = await phoneBookService.getAll_service(pagination, filter);
+    const filter = filterHelper(req, new MonthModel(), ["name"]);
+    const { data, meta } = await monthService.getAll_service(pagination, filter);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -38,7 +38,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Phone Book fetched successfully",
+      message: "Month fetched successfully",
       meta,
       data,
     };
@@ -50,7 +50,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
 export const getSingle: RequestHandler = async (req, res, next) => {
   try {
-    const data = await phoneBookService.getSingle_service(req.params.id);
+    const data = await monthService.getSingle_service(req.params.id);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -58,7 +58,7 @@ export const getSingle: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Phone Book fetched successfully",
+      message: "Month fetched successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -69,11 +69,13 @@ export const getSingle: RequestHandler = async (req, res, next) => {
 
 export const update: RequestHandler = async (req, res, next) => {
   try {
-    let data = await phoneBookService.update_service(req.params.id, req.body);
+    const Month = await MonthModel.findById(req.params.id);
+
+    let data = await monthService.update_service(req.params.id, req.body);
 
     const payload = {
       success: true,
-      message: "Phone Book Updated successfully",
+      message: "Month Updated successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -84,11 +86,11 @@ export const update: RequestHandler = async (req, res, next) => {
 
 export const remove: RequestHandler = async (req, res, next) => {
   try {
-    const data = await phoneBookService.remove_service(req.params.id);
+    const data = await monthService.remove_service(req.params.id);
 
     const payload = {
       success: true,
-      message: "Phone Book Deleted successfully",
+      message: "Month Deleted successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -99,11 +101,11 @@ export const remove: RequestHandler = async (req, res, next) => {
 
 export const removeMany: RequestHandler = async (req, res, next) => {
   try {
-    const data = await phoneBookService.removeMany_service(req.body?.ids);
+    const data = await monthService.removeMany_service(req.body?.ids);
 
     const payload = {
       success: true,
-      message: "Phone Book Deleted successfully",
+      message: "Month Deleted successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
