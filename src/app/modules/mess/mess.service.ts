@@ -74,6 +74,7 @@ export const update_service = async (id: string, payload: TMess): Promise<TMess 
 };
 export const remove_service = async (id: string): Promise<TMess | null> => {
   const data = await MessModel.findByIdAndDelete(id);
+  await UserModel.updateMany({ mess: id }, { mess: null, role: userRole.member });
   return data;
 };
 
