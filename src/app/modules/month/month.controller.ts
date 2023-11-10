@@ -9,7 +9,7 @@ import MonthModel from "./month.model";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
-    const data = await monthService.create_service(req.body);
+    const data = await monthService.create_service(req.body, req.user);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");

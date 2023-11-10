@@ -1,9 +1,20 @@
-import { IPagination } from "../../../shared/globalInterfaces";
+import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
 import MonthModel from "./month.model";
 import { TMonth } from "./month.interface";
+import { JwtPayload } from "jsonwebtoken";
 
-export const create_service = async (body: Partial<TMonth>): Promise<TMonth | null> => {
-  await MonthModel.updateMany({ mess: body.mess }, { isActive: false });
+export const create_service = async (
+  payload: Partial<TMonth>,
+  user: CustomJwtPayload | JwtPayload
+): Promise<TMonth | null> => {
+  await MonthModel.updateMany({ mess: payload.mess }, { isActive: false });
+  const body = { ...payload };
+  if (!body.mess) {
+    body.mess = user.mess;
+  }
+
+  console.log({ body, user });
+
   return await MonthModel.create(body);
 };
 

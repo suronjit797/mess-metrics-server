@@ -19,6 +19,8 @@ export const auth =
 
       const isExist = await UserModel.findById(decoded.userId);
 
+
+
       if (!isExist) {
         throw new ApiError(httpStatus.BAD_REQUEST, `Invalid user`);
       }
@@ -27,7 +29,10 @@ export const auth =
         throw new ApiError(httpStatus.FORBIDDEN, `Unauthorized Access`);
       }
 
-      req.user = { userId: decoded.userId, ...isExist };
+      const user = isExist.toJSON()
+
+
+      req.user = { userId: decoded.userId, ...user };
       next();
     } catch (error) {
       next(error);
