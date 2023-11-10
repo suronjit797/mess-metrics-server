@@ -1,10 +1,6 @@
-import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
+import { IPagination } from "../../../shared/globalInterfaces";
 import PhoneBookModel from "./phoneBook.model";
 import { TPhoneBook } from "./phoneBook.interface";
-import ApiError from "../../../ApiError";
-import httpStatus from "http-status";
-import UserModel from "../user/user.model";
-import { userRole } from "../../../constants/userConstants";
 
 export const create_service = async (body: Partial<TPhoneBook>): Promise<TPhoneBook | null> => {
   const data = await PhoneBookModel.create(body);
@@ -36,4 +32,3 @@ export const removeMany_service = async (ids: string[]): Promise<any> => {
   const data = await PhoneBookModel.deleteMany(ids);
   return data;
 };
-

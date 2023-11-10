@@ -38,8 +38,10 @@ export const create_service = async (
     const updateUserBody = { mess: data[0]._id, role: userRole.manager };
     await UserModel.findByIdAndUpdate(user.userId, updateUserBody, { new: true, session });
 
-    const newPhoneBook = { user: manager._id, name: manager.name, phone: manager.phone, mess: data[0]._id };
+    const newPhoneBook = { user: manager._id, name: manager.name, number: manager.phone, mess: data[0]._id };
+    console.log(newPhoneBook);
     await PhoneBookModel.create([newPhoneBook], { session });
+    console.log(newPhoneBook);
 
     await session.commitTransaction();
     session.endSession();
@@ -48,7 +50,8 @@ export const create_service = async (
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
+    // throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
+    throw new Error(error as 'string | undefined');
   }
 };
 
@@ -120,7 +123,7 @@ export const addMember_service = async (id: string, memberId: string): Promise<T
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
   }
 
-  const newPhoneBook = { user: member._id, name: member.name, phone: member.phone, mess: data._id };
+  const newPhoneBook = { user: member._id, name: member.name, number: member.phone, mess: data._id };
   await PhoneBookModel.create(newPhoneBook);
 
   return data;
