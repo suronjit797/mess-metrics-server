@@ -27,7 +27,8 @@ export const removeMemberZod = z.object({
 export const addMemberZod = z.object({
   body: z
     .object({
-      id: z.string(),
+      email: z.string().email().optional(),
+      phone: z.string().email().optional(),
     })
     .strict(),
 });

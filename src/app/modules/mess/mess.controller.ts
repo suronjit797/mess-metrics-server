@@ -131,7 +131,7 @@ export const removeMembers: RequestHandler = async (req, res, next) => {
 
 export const addMembers: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messService.addMember_service(req.params.id, req.body?.id);
+    const data = await messService.addMember_service(req.params.id, req.body);
 
     const payload = {
       success: true,

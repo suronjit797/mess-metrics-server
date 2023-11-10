@@ -51,7 +51,7 @@ export const create_service = async (
     await session.abortTransaction();
     session.endSession();
     // throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
-    throw new Error(error as 'string | undefined');
+    throw new Error(error as "string | undefined");
   }
 };
 
@@ -100,13 +100,16 @@ export const removeMember_service = async (id: string, membersIds: string[]): Pr
   return data;
 };
 
-export const addMember_service = async (id: string, memberId: string): Promise<TMess | null> => {
+export const addMember_service = async (
+  id: string,
+  payload: { email: string; phone: string }
+): Promise<TMess | null> => {
   const isMessExist = await MessModel.findById(id);
 
   if (!isMessExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "Mess not found");
   }
-  const member = await UserModel.findById(memberId);
+  const member = await UserModel.findOne(payload);
 
   if (!member) {
     throw new ApiError(httpStatus.NOT_FOUND, "Member not found");
@@ -115,9 +118,9 @@ export const addMember_service = async (id: string, memberId: string): Promise<T
     throw new ApiError(httpStatus.BAD_REQUEST, "Member already in a mess");
   }
 
-  await UserModel.findByIdAndUpdate(memberId, { mess: id });
+  await UserModel.findByIdAndUpdate(member._id, { mess: id });
 
-  const data = await MessModel.findByIdAndUpdate(id, { $push: { members: memberId } }, { new: true });
+  const data = await MessModel.findByIdAndUpdate(id, { $push: { members: member._id } }, { new: true });
 
   if (!data) {
     throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error  ");
