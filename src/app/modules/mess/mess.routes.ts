@@ -9,9 +9,14 @@ const messRouter = express.Router();
 const { admin, manager, member, viceManager } = userRole;
 
 messRouter.get("/", auth(), messController.getAll);
-messRouter.post("/", auth(), validatorMiddleware(createMessZod), messController.create);
+messRouter.post("/", auth(member, manager), validatorMiddleware(createMessZod), messController.create);
 messRouter.post("/delete-many", messController.removeMany);
-messRouter.post("/change-manager/:id", validatorMiddleware(changeManagerZod), messController.changeManager);
+messRouter.post(
+  "/change-manager/:id",
+  validatorMiddleware(changeManagerZod),
+  auth(admin, manager),
+  messController.changeManager
+);
 
 messRouter.post(
   "/remove-members/:id",

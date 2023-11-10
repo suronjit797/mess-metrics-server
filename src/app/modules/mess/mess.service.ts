@@ -18,6 +18,9 @@ export const create_service = async (
   if (!manager) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
   }
+  if (manager.role !== userRole.manager || manager.role !== userRole.member) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, "Only members or managers can create mess");
+  }
   if (manager.mess) {
     throw new ApiError(httpStatus.BAD_REQUEST, "You are already in a mess");
   }

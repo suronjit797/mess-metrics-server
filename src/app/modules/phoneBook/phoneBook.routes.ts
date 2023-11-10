@@ -8,7 +8,7 @@ import { createPhoneBookZod, updatePhoneBookZod } from "./phoneBook.validation";
 const phoneBookRouter = express.Router();
 const { admin, manager, member, viceManager } = userRole;
 
-phoneBookRouter.get("/", auth(admin), phoneBookController.getAll);
+phoneBookRouter.get("/", auth(admin, manager), phoneBookController.getAll);
 phoneBookRouter.post("/", auth(), validatorMiddleware(createPhoneBookZod), phoneBookController.create);
 phoneBookRouter.post("/delete-many", auth(admin, manager), phoneBookController.removeMany);
 
