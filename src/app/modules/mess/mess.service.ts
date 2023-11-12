@@ -71,9 +71,11 @@ export const getSingle_service = async (id: string): Promise<TMess | null> => {
   return data;
 };
 
-export const getMessMembers_service = async (mess: string): Promise<TUser[]> => {
-  const data = await UserModel.find({ mess });
-  return data;
+export const getMessMembers_service = async (user: CustomJwtPayload | JwtPayload): Promise<TUser[]> => {
+  if (user.mess) {
+    const data = await UserModel.find({ mess: user.mess });
+  }
+  return [];
 };
 
 export const update_service = async (id: string, payload: TMess): Promise<TMess | null> => {

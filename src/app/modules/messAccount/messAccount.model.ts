@@ -8,7 +8,6 @@ const messAccountSchema = new Schema<TMessAccount>(
     totalCost: { type: Number, required: true, default: 0 },
     totalMeal: { type: Number, required: true, default: 0 },
     totalMealCost: { type: Number, required: true, default: 0 },
-    sharedCostPerson: { type: Number, required: true, default: 0 },
     sharedCost: { type: Number, required: true, default: 0 },
     totalIndividualCost: { type: Number, required: true, default: 0 },
     mess: {

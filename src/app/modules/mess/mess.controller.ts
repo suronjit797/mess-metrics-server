@@ -69,7 +69,7 @@ export const getSingle: RequestHandler = async (req, res, next) => {
 
 export const getMembers: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messService.getMessMembers_service(req.user.mess);
+    const data = await messService.getMessMembers_service(req.user);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");

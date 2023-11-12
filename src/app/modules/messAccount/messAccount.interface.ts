@@ -7,7 +7,6 @@ export type TMessAccount = {
   totalMeal: number;
   totalMealCost: number;
   sharedCost: number;
-  sharedCostPerson: number;
   totalIndividualCost: number;
   mess: ObjectId;
   month: ObjectId;

@@ -1,12 +1,12 @@
 import { Model, ObjectId } from "mongoose";
 
 export type TMessAccount = {
-  totalAmount: number;
-  totalCost: number;
-  totalMeal: number;
-  totalMealCost: number;
+  meal: number;
+  deposit: number;
+  individualCost: number;
+
+  
   sharedCost: number;
-  sharedCostPerson: number;
   totalIndividualCost: number;
   mess: ObjectId;
   month: ObjectId;
