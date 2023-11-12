@@ -46,7 +46,7 @@ export const getMessPhoneBook_service = async (id: string): Promise<any> => {
     throw new Error("invalid Mess");
   }
 
-  const user = await UserModel.find({ mess: id }).select({ name: 1, phone: 1, role: 1 });
+  const user = await UserModel.find({ mess: id }).select({ name: 1, phone: 1, _id: 0 });
 
   const data = await PhoneBookModel.find({ mess: id }).select({ name: 1, phone: 1 });
   return [...user, ...data];
