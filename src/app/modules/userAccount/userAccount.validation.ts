@@ -4,11 +4,9 @@ export const createMessAccountCoZod = z.object({
   body: z
     .object({
       totalAmount: z.number(),
-      totalDeposit: z.number(),
       totalCost: z.number(),
       totalMeal: z.number(),
       totalMealCost: z.number(),
-      sharedCostPerson: z.number(),
       sharedCost: z.number(),
       totalIndividualCost: z.number(),
       mess: z.string(),
@@ -21,11 +19,9 @@ export const updateMessAccountCoZod = z.object({
   body: z
     .object({
       totalAmount: z.number().optional(),
-      totalDeposit: z.number().optional(),
       totalCost: z.number().optional(),
       totalMeal: z.number().optional(),
       totalMealCost: z.number().optional(),
-      sharedCostPerson: z.number().optional(),
       sharedCost: z.number().optional(),
       totalIndividualCost: z.number().optional(),
       mess: z.string().optional(),

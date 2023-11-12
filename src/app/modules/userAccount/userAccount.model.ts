@@ -1,14 +1,12 @@
 import { Schema, model } from "mongoose";
-import { TMessAccount, TMessAccountModel } from "./messAccount.interface";
+import { TMessAccount, TMessAccountModel } from "./userAccount.interface";
 
 const messAccountSchema = new Schema<TMessAccount>(
   {
     totalAmount: { type: Number, required: true, default: 0 },
-    totalDeposit: { type: Number, required: true, default: 0 },
     totalCost: { type: Number, required: true, default: 0 },
     totalMeal: { type: Number, required: true, default: 0 },
     totalMealCost: { type: Number, required: true, default: 0 },
-    sharedCostPerson: { type: Number, required: true, default: 0 },
     sharedCost: { type: Number, required: true, default: 0 },
     totalIndividualCost: { type: Number, required: true, default: 0 },
     mess: {

@@ -2,7 +2,6 @@ import { Model, ObjectId } from "mongoose";
 
 export type TMessAccount = {
   totalAmount: number;
-  totalDeposit: number;
   totalCost: number;
   totalMeal: number;
   totalMealCost: number;

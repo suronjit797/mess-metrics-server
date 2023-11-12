@@ -97,7 +97,7 @@ export const removeMember_service = async (id: string, membersIds: string[]): Pr
   if (user?.length) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Manager cannot be removed");
   }
-  await UserModel.updateMany({ _id: membersIds }, { mess: "" });
+  await UserModel.updateMany({ _id: membersIds }, { mess: null });
   const data = await MessModel.findByIdAndUpdate(id, { $pull: { members: { $in: membersIds } } }, { new: true });
   await PhoneBookModel.deleteMany({ user: membersIds });
   return data;
