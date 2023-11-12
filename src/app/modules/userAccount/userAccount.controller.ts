@@ -1,15 +1,15 @@
 import { RequestHandler } from "express";
-import * as messAccountService from "./userAccount.service";
+import * as memberAccountService from "./userAccount.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import ApiError from "../../../ApiError";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
-import MessAccountModel from "./userAccount.model";
+import MemberAccountModel from "./userAccount.model";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messAccountService.create_service(req.body, req.user);
+    const data = await memberAccountService.create_service(req.body, req.user);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -17,7 +17,7 @@ export const create: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Mess Account created successfully",
+      message: "Member Account created successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -29,8 +29,8 @@ export const create: RequestHandler = async (req, res, next) => {
 export const getAll: RequestHandler = async (req, res, next) => {
   try {
     const pagination = paginationHelper(req.query);
-    const filter = filterHelper(req, new MessAccountModel(), ["name"]);
-    const { data, meta } = await messAccountService.getAll_service(pagination, filter);
+    const filter = filterHelper(req, new MemberAccountModel(), ["name"]);
+    const { data, meta } = await memberAccountService.getAll_service(pagination, filter);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -38,7 +38,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Mess Account fetched successfully",
+      message: "Member Account fetched successfully",
       meta,
       data,
     };
@@ -50,7 +50,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
 export const getSingle: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messAccountService.getSingle_service(req.params.id);
+    const data = await memberAccountService.getSingle_service(req.params.id);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -58,7 +58,7 @@ export const getSingle: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Mess Account fetched successfully",
+      message: "Member Account fetched successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -69,11 +69,11 @@ export const getSingle: RequestHandler = async (req, res, next) => {
 
 export const update: RequestHandler = async (req, res, next) => {
   try {
-    let data = await messAccountService.update_service(req.params.id, req.body);
+    let data = await memberAccountService.update_service(req.params.id, req.body);
 
     const payload = {
       success: true,
-      message: "Mess Account Updated successfully",
+      message: "Member Account Updated successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -84,11 +84,11 @@ export const update: RequestHandler = async (req, res, next) => {
 
 export const remove: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messAccountService.remove_service(req.params.id);
+    const data = await memberAccountService.remove_service(req.params.id);
 
     const payload = {
       success: true,
-      message: "Mess Account Deleted successfully",
+      message: "Member Account Deleted successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -99,11 +99,11 @@ export const remove: RequestHandler = async (req, res, next) => {
 
 export const removeMany: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messAccountService.removeMany_service(req.body?.ids);
+    const data = await memberAccountService.removeMany_service(req.body?.ids);
 
     const payload = {
       success: true,
-      message: "Mess Account Deleted successfully",
+      message: "Member Account Deleted successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);

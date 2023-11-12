@@ -1,15 +1,11 @@
 import { Model, ObjectId } from "mongoose";
 
-export type TMessAccount = {
+export type TMemberAccount = {
   meal: number;
   deposit: number;
   individualCost: number;
-
-  
-  sharedCost: number;
-  totalIndividualCost: number;
   mess: ObjectId;
   month: ObjectId;
 };
 
-export type TMessAccountModel = Model<TMessAccount, Record<string, unknown>>;
+export type TMemberAccountModel = Model<TMemberAccount, Record<string, unknown>>;

@@ -1,14 +1,11 @@
 import { Schema, model } from "mongoose";
-import { TMessAccount, TMessAccountModel } from "./userAccount.interface";
+import { TMemberAccount, TMemberAccountModel } from "./userAccount.interface";
 
-const messAccountSchema = new Schema<TMessAccount>(
+const memberAccountSchema = new Schema<TMemberAccount>(
   {
-    totalAmount: { type: Number, required: true, default: 0 },
-    totalCost: { type: Number, required: true, default: 0 },
-    totalMeal: { type: Number, required: true, default: 0 },
-    totalMealCost: { type: Number, required: true, default: 0 },
-    sharedCost: { type: Number, required: true, default: 0 },
-    totalIndividualCost: { type: Number, required: true, default: 0 },
+    meal: { type: Number, required: true, default: 0 },
+    deposit: { type: Number, required: true, default: 0 },
+    individualCost: { type: Number, required: true, default: 0 },
     mess: {
       type: Schema.Types.ObjectId,
       ref: "Mess",
@@ -23,6 +20,6 @@ const messAccountSchema = new Schema<TMessAccount>(
   { timestamps: true }
 );
 
-const MessAccountModel = model<TMessAccount, TMessAccountModel>("Mess", messAccountSchema);
+const MemberAccountModel = model<TMemberAccount, TMemberAccountModel>("MemberAccount", memberAccountSchema);
 
-export default MessAccountModel;
+export default MemberAccountModel;

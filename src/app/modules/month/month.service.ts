@@ -2,22 +2,54 @@ import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces"
 import MonthModel from "./month.model";
 import { TMonth } from "./month.interface";
 import { JwtPayload } from "jsonwebtoken";
+import MessAccountModel from "../messAccount/messAccount.model";
+import mongoose from "mongoose";
+import MessModel from "../mess/mess.model";
 
 export const create_service = async (
   payload: Partial<TMonth>,
   user: CustomJwtPayload | JwtPayload
 ): Promise<TMonth | null> => {
-  await MonthModel.updateMany({ mess: payload.mess }, { isActive: false });
-  const body = { ...payload };
-  if (!body.mess) {
-    body.mess = user.mess;
+  // start session
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  if (!user.mess) {
+    throw new Error("User is not in a mess");
   }
 
-  console.log({ body, user });
+  const mess = await MessModel.findById(user.mess);
+  if (!mess) {
+    throw new Error("Mess is not exist");
+  }
 
-  return await MonthModel.create(body);
+  try {
+    await MonthModel.updateMany({ mess: user.mess }, { $set: { isActive: false } }, { session });
+
+    const body = { ...payload };
+    if (!body.mess) {
+      body.mess = user.mess;
+    }
+
+    const month = await MonthModel.create([body], { session });
+
+    const newMessAccount = {
+      month: month[0]._id,
+      mess: user.mess,
+    };
+    await MessAccountModel.create([newMessAccount], { session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return month[0];
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
+    throw new Error(error as any);
+  }
 };
-
 export const getAll_service = async (pagination: IPagination, filter: any): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
   const data = await MonthModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
