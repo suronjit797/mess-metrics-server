@@ -5,6 +5,8 @@ import { JwtPayload } from "jsonwebtoken";
 import MessAccountModel from "../messAccount/messAccount.model";
 import mongoose from "mongoose";
 import MessModel from "../mess/mess.model";
+import ApiError from "../../../ApiError";
+import httpStatus from "http-status";
 
 export const create_service = async (
   payload: Partial<TMonth>,
@@ -70,5 +72,26 @@ export const remove_service = async (id: string): Promise<TMonth | null> => {
 
 export const removeMany_service = async (ids: string[]): Promise<any> => {
   const data = await MonthModel.deleteMany(ids);
+  return data;
+};
+
+export const getMessMonth_service = async (id: string): Promise<TMonth[] | null> => {
+  const data = await MonthModel.find({ mess: id });
+  return data;
+};
+
+export const getMessActiveMonth_service = async (id: string): Promise<TMonth | null> => {
+  const data = await MonthModel.findOne({ mess: id, isActive: true });
+  return data;
+};
+
+export const switchActiveMonth_service = async (monthId: string): Promise<TMonth | null> => {
+  const month = await MonthModel.findById(monthId);
+  if (!month) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Month is not exist");
+  }
+
+  await MonthModel.updateMany({ mess: month.mess }, { isActive: false }, { new: true });
+  const data = await MonthModel.findByIdAndUpdate(monthId, { isActive: true }, { new: true });
   return data;
 };

@@ -113,3 +113,56 @@ export const removeMany: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getMessMonth: RequestHandler = async (req, res, next) => {
+  try {
+    if (!req.user?.mess) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "User is not in a mess");
+    }
+    const data = await monthService.getMessMonth_service(req.user?.mess);
+
+    const payload = {
+      success: true,
+      message: "mess Month list fetched successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+export const getMessActiveMonth: RequestHandler = async (req, res, next) => {
+  try {
+    if (!req.user?.mess) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "User is not in a mess");
+    }
+    const data = await monthService.getMessActiveMonth_service(req.user?.mess);
+
+    const payload = {
+      success: true,
+      message: "mess Month fetched successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const switchActiveMonth: RequestHandler = async (req, res, next) => {
+  try {
+    if (!req.user?.mess) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "User is not in a mess");
+    }
+    const data = await monthService.switchActiveMonth_service(req.params.id);
+
+    const payload = {
+      success: true,
+      message: "Month switched successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};

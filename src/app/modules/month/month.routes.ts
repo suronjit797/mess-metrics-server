@@ -10,7 +10,11 @@ const { admin, manager, member, viceManager } = userRole;
 
 monthRouter.get("/", auth(member, manager), monthController.getAll);
 monthRouter.post("/", auth(member, manager), validatorMiddleware(createMonthZod), monthController.create);
-monthRouter.post("/delete-many",auth(admin),  monthController.removeMany);
+monthRouter.post("/delete-many", auth(admin), monthController.removeMany);
+monthRouter.get("/active", auth(), monthController.getMessActiveMonth);
+monthRouter.get("/mess", auth(), monthController.getMessMonth);
+
+monthRouter.put("/mess/:id", auth(), monthController.switchActiveMonth);
 
 monthRouter.get("/:id", auth(manager, member), monthController.getSingle);
 monthRouter.put("/:id", auth(admin, manager, viceManager), validatorMiddleware(updateMonthZod), monthController.update);
