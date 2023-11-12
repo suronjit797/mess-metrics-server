@@ -40,9 +40,9 @@ export const create_service = async (body: any, user: CustomJwtPayload | JwtPayl
     const updateUserBody = { mess: data[0]._id, role: userRole.manager };
     await UserModel.findByIdAndUpdate(user.userId, updateUserBody, { new: true, session });
 
-    // add in phone book
-    const newPhoneBook = { user: manager._id, name: manager.name, phone: manager.phone, mess: data[0]._id };
-    await PhoneBookModel.create([newPhoneBook], { session });
+    // // add in phone book
+    // const newPhoneBook = { user: manager._id, name: manager.name, phone: manager.phone, mess: data[0]._id };
+    // await PhoneBookModel.create([newPhoneBook], { session });
 
     // commit transaction
     await session.commitTransaction();

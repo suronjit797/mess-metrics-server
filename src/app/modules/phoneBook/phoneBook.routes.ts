@@ -10,6 +10,7 @@ const { admin, manager, member, viceManager } = userRole;
 
 phoneBookRouter.get("/", auth(admin, manager), phoneBookController.getAll);
 phoneBookRouter.post("/", auth(), validatorMiddleware(createPhoneBookZod), phoneBookController.create);
+phoneBookRouter.get("/mess-phone-book", auth(), phoneBookController.getMessPhoneBook);
 phoneBookRouter.post("/delete-many", auth(admin, manager), phoneBookController.removeMany);
 
 phoneBookRouter.get("/:id", auth(manager, admin), phoneBookController.getSingle);

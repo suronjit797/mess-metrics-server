@@ -2,13 +2,14 @@ import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces"
 import PhoneBookModel from "./phoneBook.model";
 import { TPhoneBook } from "./phoneBook.interface";
 import { JwtPayload } from "jsonwebtoken";
+import { invalid } from "moment";
+import UserModel from "../user/user.model";
 
 export const create_service = async (
   payload: TPhoneBook,
   user: CustomJwtPayload | JwtPayload
 ): Promise<TPhoneBook | null> => {
   const body = { ...payload, mess: user.mess };
-  
 
   const data = await PhoneBookModel.create(body);
   return data;
@@ -38,4 +39,15 @@ export const remove_service = async (id: string): Promise<TPhoneBook | null> => 
 export const removeMany_service = async (ids: string[]): Promise<any> => {
   const data = await PhoneBookModel.deleteMany(ids);
   return data;
+};
+
+export const getMessPhoneBook_service = async (id: string): Promise<any> => {
+  if (!id) {
+    throw new Error("invalid Mess");
+  }
+
+  const user = await UserModel.find({ mess: id }).select({ name: 1, phone: 1, role: 1 });
+
+  const data = await PhoneBookModel.find({ mess: id }).select({ name: 1, phone: 1 });
+  return [...user, ...data];
 };

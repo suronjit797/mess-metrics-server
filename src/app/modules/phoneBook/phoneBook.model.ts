@@ -16,10 +16,7 @@ const phoneBookSchema = new Schema<TPhoneBook>(
       ref: "Mess",
       required: true,
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
+
   },
   { timestamps: true }
 );

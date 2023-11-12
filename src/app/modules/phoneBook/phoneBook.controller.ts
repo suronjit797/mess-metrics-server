@@ -111,3 +111,18 @@ export const removeMany: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getMessPhoneBook: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await phoneBookService.getMessPhoneBook_service(req.user.mess);
+
+    const payload = {
+      success: true,
+      message: "Mess Phone Book Fetched successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
