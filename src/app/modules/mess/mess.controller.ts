@@ -67,6 +67,25 @@ export const getSingle: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getMembers: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await messService.getMessMembers_service(req.user.mess);
+
+    if (!data) {
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
+    }
+
+    const payload = {
+      success: true,
+      message: "Mess members fetched successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const update: RequestHandler = async (req, res, next) => {
   try {
     const Mess = await MessModel.findById(req.params.id);

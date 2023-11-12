@@ -8,6 +8,7 @@ import UserModel from "../user/user.model";
 import { userRole } from "../../../constants/userConstants";
 import PhoneBookModel from "../phoneBook/phoneBook.model";
 import MonthModel from "../month/month.model";
+import { TUser } from "../user/user.interface";
 
 export const create_service = async (body: any, user: CustomJwtPayload | JwtPayload): Promise<TMess | null> => {
   // check if already in mess
@@ -61,6 +62,7 @@ export const getAll_service = async (pagination: IPagination, filter: any): Prom
   const total = await MessModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };
+
 export const getSingle_service = async (id: string): Promise<TMess | null> => {
   const data = await MessModel.findById(id).populate([
     { path: "manager", select: "-password" },
@@ -68,10 +70,17 @@ export const getSingle_service = async (id: string): Promise<TMess | null> => {
   ]);
   return data;
 };
+
+export const getMessMembers_service = async (mess: string): Promise<TUser[]> => {
+  const data = await UserModel.find({ mess });
+  return data;
+};
+
 export const update_service = async (id: string, payload: TMess): Promise<TMess | null> => {
   const data = await MessModel.findByIdAndUpdate(id, payload, { new: true });
   return data;
 };
+
 export const remove_service = async (id: string): Promise<TMess | null> => {
   const data = await MessModel.findByIdAndDelete(id);
   await UserModel.updateMany({ mess: id }, { mess: null, role: userRole.member });
