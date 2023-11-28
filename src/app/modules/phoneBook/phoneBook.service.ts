@@ -2,7 +2,6 @@ import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces"
 import PhoneBookModel from "./phoneBook.model";
 import { TPhoneBook } from "./phoneBook.interface";
 import { JwtPayload } from "jsonwebtoken";
-import { invalid } from "moment";
 import UserModel from "../user/user.model";
 
 export const create_service = async (
