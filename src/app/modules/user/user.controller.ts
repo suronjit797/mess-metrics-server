@@ -77,6 +77,24 @@ export const getProfile: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+export const updateProfile: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await userService.updateProfile_service(req.user.userId, req.body);
+
+    if (!data) {
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
+    }
+
+    const payload = {
+      success: true,
+      message: "User fetched successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
 
 // user
 export const getAll: RequestHandler = async (req, res, next) => {

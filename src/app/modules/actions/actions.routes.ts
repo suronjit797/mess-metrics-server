@@ -8,7 +8,6 @@ import { addMemberZod, changeManagerZod, createMessZod, removeMemberZod, updateM
 const actionsRouter = express.Router();
 const { admin, manager, member, viceManager } = userRole;
 
-actionsRouter.get("/create-month", auth(), messController.createMonth);
-
+actionsRouter.post("/add-meal", auth(), messController.addMeal);
 
 export default actionsRouter;

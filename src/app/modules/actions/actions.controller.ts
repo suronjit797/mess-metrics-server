@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import * as messService from "./actions.service";
+import * as actionService from "./actions.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import ApiError from "../../../ApiError";
@@ -7,8 +7,9 @@ import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
 
 
-export const createMonth: RequestHandler = async (req, res, next) => {
+export const addMeal: RequestHandler = async (req, res, next) => {
   try {
+    const data = await actionService.addMeal_service(req.body, req.user)
     const payload = {
       success: true,
       message: "New Month created successfully",

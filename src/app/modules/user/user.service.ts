@@ -57,8 +57,14 @@ export const loginService = async (payload: LoginPayload): Promise<LoginRes> => 
     refreshToken,
   };
 };
+
 export const getProfile_service = async (id: string): Promise<TUser | null> => {
   const data = await UserModel.findById(id).select({ password: 0 }).populate("mess");
+  return data;
+};
+
+export const updateProfile_service = async (id: string, payload: any): Promise<TUser | null> => {
+  const data = await UserModel.findByIdAndUpdate(id, { $set: payload });
   return data;
 };
 
@@ -85,6 +91,6 @@ export const remove_service = async (id: string): Promise<TUser | null> => {
 // account
 export const getAccount_service = async (user: CustomJwtPayload | JwtPayload): Promise<TMemberAccount[]> => {
   const { mess, activeMonth } = user;
-  const data = await MemberAccountModel.find({ mess, month: activeMonth });
+  const data = await MemberAccountModel.find({ mess, month: activeMonth }).populate("user");
   return data;
 };

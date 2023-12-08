@@ -12,6 +12,7 @@ const { admin, manager } = userRole;
 userRouter.post("/create", validatorMiddleware(userCreateValidationZod), userController.createUser);
 userRouter.post("/login", validatorMiddleware(userLoginValidationZod), userController.loginUser);
 userRouter.get("/profile", auth(), userController.getProfile);
+userRouter.put("/profile", auth(), userController.updateProfile);
 
 // user
 userRouter.get("/", auth(admin, manager), userController.getAll);

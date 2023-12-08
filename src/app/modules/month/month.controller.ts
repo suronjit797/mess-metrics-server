@@ -154,7 +154,7 @@ export const switchActiveMonth: RequestHandler = async (req, res, next) => {
     if (!req.user?.mess) {
       throw new ApiError(httpStatus.BAD_REQUEST, "User is not in a mess");
     }
-    const data = await monthService.switchActiveMonth_service(req.params.id);
+    const data = await monthService.switchActiveMonth_service(req.params.id, req.user.userId);
 
     const payload = {
       success: true,

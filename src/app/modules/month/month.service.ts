@@ -100,13 +100,12 @@ export const getMessActiveMonth_service = async (id: string): Promise<TMonth | n
   return data;
 };
 
-export const switchActiveMonth_service = async (monthId: string): Promise<TMonth | null> => {
+export const switchActiveMonth_service = async (monthId: string, userId: string): Promise<TMonth | null> => {
   const month = await MonthModel.findById(monthId);
   if (!month) {
     throw new ApiError(httpStatus.NOT_FOUND, "Month is not exist");
   }
 
-  await MonthModel.updateMany({ mess: month.mess }, { isActive: false }, { new: true });
-  const data = await MonthModel.findByIdAndUpdate(monthId, { isActive: true }, { new: true });
-  return data;
+  const data = await UserModel.findByIdAndUpdate(userId, { $set: { activeMonth: monthId } }, { new: true });
+  return month;
 };
