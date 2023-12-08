@@ -6,6 +6,7 @@ export type TMemberAccount = {
   individualCost: number;
   mess: ObjectId;
   month: ObjectId;
+  user: ObjectId;
 };
 
 export type TMemberAccountModel = Model<TMemberAccount, Record<string, unknown>>;

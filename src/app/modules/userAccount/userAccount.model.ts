@@ -16,6 +16,11 @@ const memberAccountSchema = new Schema<TMemberAccount>(
       ref: "Month",
       required: true,
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

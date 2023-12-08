@@ -7,6 +7,8 @@ import mongoose from "mongoose";
 import MessModel from "../mess/mess.model";
 import ApiError from "../../../ApiError";
 import httpStatus from "http-status";
+import UserModel from "../user/user.model";
+import MemberAccountModel from "../userAccount/userAccount.model";
 
 export const create_service = async (
   payload: Partial<TMonth>,
@@ -35,6 +37,18 @@ export const create_service = async (
 
     const month = await MonthModel.create([body], { session });
 
+    const users = await UserModel.find({mess: body.mess})
+
+       // Create default MessAccount entries for each user
+       const memberAccountEntries = users.map((u) => ({
+        month: month[0]._id,
+        mess: user.mess,
+        user: u._id,
+      }));
+
+  
+      await MemberAccountModel.create(memberAccountEntries, { session });
+
     const newMessAccount = {
       month: month[0]._id,
       mess: user.mess,
@@ -46,6 +60,7 @@ export const create_service = async (
 
     return month[0];
   } catch (error) {
+    console.log(error)
     await session.abortTransaction();
     session.endSession();
 
