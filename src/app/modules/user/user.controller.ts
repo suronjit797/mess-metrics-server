@@ -161,3 +161,24 @@ export const remove: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+// user account
+export const getAccount: RequestHandler = async (req, res, next) => {
+  try {
+    
+    const data = await userService.getAccount_service(req.user);
+
+    if (!data) {
+      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
+    }
+
+    const payload = {
+      success: true,
+      message: "Users fetched successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};

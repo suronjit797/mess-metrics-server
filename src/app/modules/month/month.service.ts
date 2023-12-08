@@ -36,18 +36,16 @@ export const create_service = async (
     }
 
     const month = await MonthModel.create([body], { session });
+    const users = await UserModel.find({ mess: body.mess });
 
-    const users = await UserModel.find({mess: body.mess})
+    // Create default MessAccount entries for each user
+    const memberAccountEntries = users.map((u) => ({
+      month: month[0]._id,
+      mess: user.mess,
+      user: u._id,
+    }));
 
-       // Create default MessAccount entries for each user
-       const memberAccountEntries = users.map((u) => ({
-        month: month[0]._id,
-        mess: user.mess,
-        user: u._id,
-      }));
-
-  
-      await MemberAccountModel.create(memberAccountEntries, { session });
+    await MemberAccountModel.create(memberAccountEntries, { session });
 
     const newMessAccount = {
       month: month[0]._id,
@@ -55,12 +53,14 @@ export const create_service = async (
     };
     await MessAccountModel.create([newMessAccount], { session });
 
+    await UserModel.updateMany({ mess: mess._id }, { $set: { activeMonth: month[0]._id } }, { session });
+
     await session.commitTransaction();
     session.endSession();
 
     return month[0];
   } catch (error) {
-    console.log(error)
+    console.log(error);
     await session.abortTransaction();
     session.endSession();
 

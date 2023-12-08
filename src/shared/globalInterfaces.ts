@@ -41,6 +41,7 @@ export interface CustomJwtPayload {
   dateOfBirth: string;
   image: string;
   mess: ObjectId;
+  activeMonth: ObjectId;
 }
 
 export type ISortCondition = { [key: string]: SortOrder };

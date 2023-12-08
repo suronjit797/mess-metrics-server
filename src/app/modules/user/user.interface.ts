@@ -9,6 +9,7 @@ export type TUser = {
   dateOfBirth: string;
   image: string;
   mess: ObjectId;
+  activeMonth: ObjectId;
 };
 
 export type TUserModel = Model<TUser, Record<string, unknown>>;

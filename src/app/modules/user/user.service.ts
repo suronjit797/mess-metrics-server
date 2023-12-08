@@ -4,8 +4,10 @@ import config from "../../../config";
 import { TUser } from "./user.interface";
 import UserModel from "./user.model";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { IPagination } from "../../../shared/globalInterfaces";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
+import { TMemberAccount } from "../userAccount/userAccount.interface";
+import MemberAccountModel from "../userAccount/userAccount.model";
 
 type LoginPayload = {
   email: string;
@@ -77,5 +79,12 @@ export const update_service = async (id: string, payload: TUser): Promise<TUser 
 };
 export const remove_service = async (id: string): Promise<TUser | null> => {
   const data = await UserModel.findByIdAndDelete(id);
+  return data;
+};
+
+// account
+export const getAccount_service = async (user: CustomJwtPayload | JwtPayload): Promise<TMemberAccount[]> => {
+  const { mess, activeMonth } = user;
+  const data = await MemberAccountModel.find({ mess, month: activeMonth });
   return data;
 };

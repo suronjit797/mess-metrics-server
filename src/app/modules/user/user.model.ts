@@ -39,6 +39,10 @@ const userSchema = new Schema<TUser>(
       type: Schema.Types.ObjectId,
       ref: "Mess",
     },
+    activeMonth: {
+      type: Schema.Types.ObjectId,
+      ref: "Month",
+    },
   },
   { timestamps: true }
 );
