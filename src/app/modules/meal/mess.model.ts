@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import { TCreateMeal, TMealModel } from "./mess.interface";
 
 const mealSchema = new Schema<TCreateMeal>(
@@ -7,9 +7,16 @@ const mealSchema = new Schema<TCreateMeal>(
       type: String,
       required: true,
     },
+    mess: {
+      type: Types.ObjectId,
+      required: true,
+    },
     meal: [
       {
-        id: String,
+        id: {
+          type: Types.ObjectId,
+          ref: 'User'
+        },
         meal: Number,
       },
     ],
