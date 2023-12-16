@@ -12,7 +12,7 @@ export const addMeal: RequestHandler = async (req, res, next) => {
     const payload = {
       success: true,
       message: "Meal Add successfully",
-      // data,
+      data,
     };
     return sendResponse(res, httpStatus.OK, payload);
   } catch (error) {

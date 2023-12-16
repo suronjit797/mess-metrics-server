@@ -5,6 +5,7 @@ export type meal = { id: string; meal: number };
 export type TCreateMeal = {
   date: string;
   mess: ObjectId;
+  activeMonth: ObjectId;
   meal: meal[];
 };
 

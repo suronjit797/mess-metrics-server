@@ -11,11 +11,16 @@ const mealSchema = new Schema<TCreateMeal>(
       type: Types.ObjectId,
       required: true,
     },
+    activeMonth: {
+      type: Schema.Types.ObjectId,
+      ref: "Month",
+      required: true,
+    },
     meal: [
       {
         id: {
           type: Types.ObjectId,
-          ref: 'User'
+          ref: "User",
         },
         meal: Number,
       },
