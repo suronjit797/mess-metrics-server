@@ -5,6 +5,7 @@ import monthRouter from "./modules/month/month.routes";
 import phoneBookRouter from "./modules/phoneBook/phoneBook.routes";
 import personalAccountRouter from "./modules/personalAccount/personalAccount.routes";
 import actionsRouter from "./modules/actions/actions.routes";
+import messAccountCoRouter from "./modules/messAccount/messAccount.routes";
 
 const router = express.Router();
 
@@ -15,6 +16,7 @@ const moduleRoute = [
   { path: "/phoneBook", routes: phoneBookRouter },
   { path: "/personalAccount", routes: personalAccountRouter },
   { path: "/actions", routes: actionsRouter },
+  { path: "/messAccount", routes: messAccountCoRouter },
 ];
 
 moduleRoute.forEach((route) => router.use(route.path, route.routes));

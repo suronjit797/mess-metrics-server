@@ -31,7 +31,7 @@ export const getSingle_service = async (id: string): Promise<TMessAccount | null
 export const update_service = async (id: string, payload: TMessAccount): Promise<TMessAccount | null> => {
   return await MessAccountModel.findByIdAndUpdate(id, payload, { new: true });
 };
-export const remove_service = async (id: string): Promise<TMessAccount | null> => {
+export const remove_service = async (id: string): Promise<any> => {
   const data = await MessAccountModel.findByIdAndDelete(id);
   return data;
 };

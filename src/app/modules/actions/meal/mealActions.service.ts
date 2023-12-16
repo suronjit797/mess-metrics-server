@@ -1,18 +1,13 @@
-import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
+import { CustomJwtPayload, IPagination } from "../../../../shared/globalInterfaces";
 import { Types } from "mongoose";
 
-import ApiError from "../../../ApiError";
+import ApiError from "../../../../ApiError";
 import httpStatus from "http-status";
 import moment from "moment";
 import { JwtPayload } from "jsonwebtoken";
-import UserModel from "../user/user.model";
-import { userRole } from "../../../constants/userConstants";
-import PhoneBookModel from "../phoneBook/phoneBook.model";
-import { TCreateMeal } from "../meal/mess.interface";
-import MealModel from "../meal/mess.model";
-import PersonalAccountModel from "../personalAccount/personalAccount.model";
-import MemberAccountModel from "../userAccount/userAccount.model";
-import { string } from "zod";
+import { TCreateMeal } from "../../meal/mess.interface";
+import MealModel from "../../meal/mess.model";
+import MemberAccountModel from "../../userAccount/userAccount.model";
 
 const { ObjectId } = Types;
 
@@ -54,7 +49,7 @@ export const getMealByDate_Service = async (
   }
 };
 
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 export const updateMeal_Service = async (id: string, payload: TCreateMeal): Promise<TCreateMeal | null> => {
   const session = await mongoose.startSession();
@@ -64,15 +59,22 @@ export const updateMeal_Service = async (id: string, payload: TCreateMeal): Prom
     const mealData = await MealModel.findById(id).session(session);
 
     if (!mealData) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Invalid Request');
+      throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Request");
     }
 
     const updatePromises = payload.meal?.map(async (e) => {
+      const findData = mealData.meal.find((d) => new ObjectId(d.id).equals(e.id));
+
+      let changeNumber = 0;
+      if (findData) {
+        changeNumber = e.meal - findData.meal;
+      }
+
       console.log({ mess: mealData.mess, month: mealData.activeMonth, user: new ObjectId(e.id) });
       await MemberAccountModel.updateOne(
         { mess: mealData.mess, month: mealData.activeMonth, user: new ObjectId(e.id) },
-        { meal: e.meal },
-        { session }
+        { $inc: { meal: changeNumber } },
+        { session, upsert: true }
       );
     });
 
@@ -97,6 +99,6 @@ export const updateMeal_Service = async (id: string, payload: TCreateMeal): Prom
     await session.abortTransaction();
     session.endSession();
     console.log(error);
-    throw new Error(error as 'string | undefined');
+    throw new Error(error as "string | undefined");
   }
 };
