@@ -1,7 +1,7 @@
 import { Schema, model, Types } from "mongoose";
-import { TCreateMeal, TMealModel } from "./mess.interface";
+import { TMeal, TMealModel } from "./meal.interface";
 
-const mealSchema = new Schema<TCreateMeal>(
+const mealSchema = new Schema<TMeal>(
   {
     date: {
       type: String,
@@ -16,19 +16,16 @@ const mealSchema = new Schema<TCreateMeal>(
       ref: "Month",
       required: true,
     },
-    meal: [
-      {
-        id: {
-          type: Types.ObjectId,
-          ref: "User",
-        },
-        meal: Number,
-      },
-    ],
+    meal: { type: Number, default: 0 },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-const MealModel = model<TCreateMeal, TMealModel>("Meal", mealSchema);
+const MealModel = model<TMeal, TMealModel>("Meal", mealSchema);
 
 export default MealModel;

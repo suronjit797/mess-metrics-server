@@ -2,7 +2,6 @@ import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces"
 import MonthModel from "./month.model";
 import { TMonth } from "./month.interface";
 import { JwtPayload } from "jsonwebtoken";
-import MessAccountModel from "../messAccount/messAccount.model";
 import mongoose from "mongoose";
 import MessModel from "../mess/mess.model";
 import ApiError from "../../../ApiError";
@@ -51,7 +50,6 @@ export const create_service = async (
       month: month[0]._id,
       mess: user.mess,
     };
-    await MessAccountModel.create([newMessAccount], { session });
 
     await UserModel.updateMany({ mess: mess._id }, { $set: { activeMonth: month[0]._id } }, { session });
 

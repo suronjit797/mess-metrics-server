@@ -1,6 +1,7 @@
 import { Model, ObjectId } from "mongoose";
 
 export type TMonth = {
+  _id?: ObjectId;
   name: string;
   year: number;
   isActive: boolean;

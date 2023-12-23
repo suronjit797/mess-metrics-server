@@ -1,5 +1,5 @@
 import express from "express";
-import * as mealActionController from "./meal/mealAction.controller";
+// import * as mealActionController from "./meal/mealAction.controller";
 import * as messAccountActionController from "./messAccount/messAccountAction.controller";
 import { validatorMiddleware } from "../../middleware/validatorMiddleware";
 import { auth } from "../../middleware/auth";
@@ -13,9 +13,9 @@ const { admin, manager, member, viceManager } = userRole;
 
 // !not valid have to remove or modify 
 // meal
-actionsRouter.post("/add-meal", auth(), mealActionController.addMeal);
-actionsRouter.get("/meal-by-date", auth(), mealActionController.getMealByDate);
-actionsRouter.put("/meal/:id", auth(), mealActionController.updateMeal);
+// actionsRouter.post("/add-meal", auth(), mealActionController.addMeal);
+// actionsRouter.get("/meal-by-date", auth(), mealActionController.getMealByDate);
+// actionsRouter.put("/meal/:id", auth(), mealActionController.updateMeal);
 
 // mess Account
 
