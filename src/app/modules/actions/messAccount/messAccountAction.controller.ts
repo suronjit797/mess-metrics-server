@@ -17,16 +17,4 @@ export const getMessAccount: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const addTotalMealCost: RequestHandler = async (req, res, next) => {
-  try {
-    const data = await messAccountService.addTotalMealCost_service(req.user, req.params.id as string, req.body);
-    const payload = {
-      success: true,
-      message: "Mess Account Updated Successfully",
-      data,
-    };
-    return sendResponse(res, httpStatus.OK, payload);
-  } catch (error) {
-    next(error);
-  }
-};
+

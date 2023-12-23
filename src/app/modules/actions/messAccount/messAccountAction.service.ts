@@ -7,6 +7,7 @@ import ApiError from "../../../../ApiError";
 import httpStatus from "http-status";
 import BazarModel from "../../bazar/bazar.model";
 import { TMess } from "../../mess/mess.interface";
+import SharedCostModel from "../../sharedCost/sharedCost.model";
 
 const { ObjectId } = Types;
 
@@ -15,12 +16,21 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
     const messAccount = await MessAccountModel.findOne({ mess: user.mess, month: user.activeMonth });
 
     if (messAccount) {
+      // bazar lsit
       const bazarList = await BazarModel.find({ mess: user.mess, month: user.activeMonth });
       const totalMealCost = bazarList.reduce((accumulator, bazar) => accumulator + bazar.amount, 0);
+
+      // shared cost
+      const sharedCostList = await SharedCostModel.find({ mess: user.mess, month: user.activeMonth });
+      const sharedCost = sharedCostList.reduce((accumulator, bazar) => accumulator + bazar.amount, 0);
+
       // todo add all cost to find total cost
-      const totalCost = Number(totalMealCost);
+      const totalCost = Number(totalMealCost + sharedCost);
+
+      // replace other accounts
       messAccount.totalMealCost = totalMealCost;
       messAccount.totalCost = totalCost;
+      messAccount.sharedCost = sharedCost;
     }
 
     return messAccount;

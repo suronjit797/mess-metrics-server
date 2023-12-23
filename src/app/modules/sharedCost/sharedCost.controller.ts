@@ -1,15 +1,15 @@
 import { RequestHandler } from "express";
-import * as bazarService from "./bazar.service";
+import * as sharedCostService from "./sharedCost.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import ApiError from "../../../ApiError";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
-import BazarModel from "./bazar.model";
+import SharedCostModel from "./sharedCost.model";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
-    const data = await bazarService.create_service(req.body, req.user);
+    const data = await sharedCostService.create_service(req.body, req.user);
 
     if (!data) {
       throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
@@ -17,7 +17,7 @@ export const create: RequestHandler = async (req, res, next) => {
 
     const payload = {
       success: true,
-      message: "Bazar created successfully",
+      message: "Shared Cost created successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -29,16 +29,11 @@ export const create: RequestHandler = async (req, res, next) => {
 export const getAll: RequestHandler = async (req, res, next) => {
   try {
     const pagination = paginationHelper(req.query);
-    const filter = filterHelper(req, new BazarModel(), ["name"]);
-    const { data, meta } = await bazarService.getAll_service(pagination, filter);
-
-    if (!data) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
-    }
-
+    const filter = filterHelper(req, new SharedCostModel(), ["name"]);
+    const { data, meta } = await sharedCostService.getAll_service(pagination, filter);
     const payload = {
       success: true,
-      message: "Bazar fetched successfully",
+      message: "Shared Cost fetched successfully",
       meta,
       data,
     };
@@ -50,15 +45,10 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
 export const getSingle: RequestHandler = async (req, res, next) => {
   try {
-    const data = await bazarService.getSingle_service(req.params.id);
-
-    if (!data) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
-    }
-
+    const data = await sharedCostService.getSingle_service(req.params.id);
     const payload = {
       success: true,
-      message: "Bazar fetched successfully",
+      message: "Shared Cost fetched successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -66,17 +56,13 @@ export const getSingle: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const getLast: RequestHandler = async (req, res, next) => {
   try {
-    const data = await bazarService.getLast_service(req.user);
-    if (!data) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
-    }
+    const data = await sharedCostService.getLast_service(req.user);
     const payload = {
       success: true,
-      message: "Last Bazar fetched successfully",
+      message: "Last Shared Cost fetched successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -85,14 +71,13 @@ export const getLast: RequestHandler = async (req, res, next) => {
   }
 };
 
-
 export const update: RequestHandler = async (req, res, next) => {
   try {
-    let data = await bazarService.update_service(req.params.id, req.body);
+    let data = await sharedCostService.update_service(req.params.id, req.body);
 
     const payload = {
       success: true,
-      message: "Bazar Updated successfully",
+      message: "Shared Cost Updated successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -103,11 +88,11 @@ export const update: RequestHandler = async (req, res, next) => {
 
 export const remove: RequestHandler = async (req, res, next) => {
   try {
-    const data = await bazarService.remove_service(req.params.id);
+    const data = await sharedCostService.remove_service(req.params.id);
 
     const payload = {
       success: true,
-      message: "Bazar Deleted successfully",
+      message: "Shared Cost Deleted successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);
@@ -118,11 +103,11 @@ export const remove: RequestHandler = async (req, res, next) => {
 
 export const removeMany: RequestHandler = async (req, res, next) => {
   try {
-    const data = await bazarService.removeMany_service(req.body?.ids);
+    const data = await sharedCostService.removeMany_service(req.body?.ids);
 
     const payload = {
       success: true,
-      message: "Bazars Deleted successfully",
+      message: "Shared Costs Deleted successfully",
       data,
     };
     return sendResponse(res, httpStatus.OK, payload);

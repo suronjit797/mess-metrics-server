@@ -24,6 +24,6 @@ actionsRouter.get("/mess-account", auth(), messAccountActionController.getMessAc
 
 
 // params
-// actionsRouter.put("/add-meal-cost/:id", auth(), messAccountActionController.addTotalMealCost);
+
 
 export default actionsRouter;
