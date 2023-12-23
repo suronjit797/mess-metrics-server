@@ -1,43 +1,23 @@
 import { z } from "zod";
 
-export const createMessZod = z.object({
+export const createBazarZod = z.object({
   body: z
     .object({
-      name: z.string(),
+      date: z.string(),
+      amount: z.number(),
+      members: z.array(z.string()),
+      list: z.string().optional(),
     })
     .strict(),
 });
 
-export const updateMessZod = z.object({
+export const updateBazarZod = z.object({
   body: z
     .object({
-      name: z.string().optional(),
-    })
-    .strict(),
-});
-
-export const removeMemberZod = z.object({
-  body: z
-    .object({
-      ids: z.array(z.string()),
-    })
-    .strict(),
-});
-
-export const addMemberZod = z.object({
-  body: z
-    .object({
-      email: z.string().email().optional(),
-      phone: z.string().optional(),
-    })
-    .strict(),
-});
-
-export const changeManagerZod = z.object({
-  body: z
-    .object({
-      managerId: z.string(),
-      newManagerId: z.string(),
+      date: z.string().optional(),
+      amount: z.number().optional(),
+      members: z.array(z.string()).optional(),
+      list: z.string().optional(),
     })
     .strict(),
 });

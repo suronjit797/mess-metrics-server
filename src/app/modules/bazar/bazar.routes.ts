@@ -1,33 +1,22 @@
 import express from "express";
-import * as messController from "./bazar.controller";
+import * as bazarController from "./bazar.controller";
 import { validatorMiddleware } from "../../middleware/validatorMiddleware";
 import { auth } from "../../middleware/auth";
 import { userRole } from "../../../constants/userConstants";
-import { addMemberZod, changeManagerZod, createMessZod, removeMemberZod, updateMessZod } from "./bazar.validation";
+import { createBazarZod, updateBazarZod } from "./bazar.validation";
 
-const messRouter = express.Router();
+// ! not work with access
+
+const bazarRouter = express.Router();
 const { admin, manager, member, viceManager } = userRole;
+bazarRouter.get("/", auth(), bazarController.getAll);
+bazarRouter.post("/", auth(), validatorMiddleware(createBazarZod), bazarController.create);
+bazarRouter.get("/last", auth(), bazarController.getLast);
+bazarRouter.post("/remove-many", auth(), bazarController.removeMany);
 
-messRouter.get("/", auth(), messController.getAll);
-messRouter.post("/", auth(member, manager), validatorMiddleware(createMessZod), messController.create);
-messRouter.post("/delete-many", messController.removeMany);
-messRouter.post(
-  "/change-manager/:id",
-  validatorMiddleware(changeManagerZod),
-  auth(admin, manager),
-  messController.changeManager
-);
+// with params
+bazarRouter.get("/:id", auth(), bazarController.getSingle);
+bazarRouter.put("/:id", auth(), validatorMiddleware(updateBazarZod), bazarController.update);
+bazarRouter.delete("/:id", auth(), bazarController.remove);
 
-messRouter.post(
-  "/remove-members/:id",
-  auth(admin, manager),
-  validatorMiddleware(removeMemberZod),
-  messController.removeMembers
-);
-messRouter.post("/add-member/:id", auth(admin, manager), validatorMiddleware(addMemberZod), messController.addMembers);
-
-messRouter.get("/:id", auth(), messController.getSingle);
-messRouter.put("/:id", auth(admin, manager, viceManager), validatorMiddleware(updateMessZod), messController.update);
-messRouter.delete("/:id", auth(admin, manager), messController.remove);
-
-export default messRouter;
+export default bazarRouter;

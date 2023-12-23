@@ -1,19 +1,31 @@
 import { Schema, model } from "mongoose";
-import { TMess, TMessModel } from "./bazar.interface";
+import { TBazar, TBazarModel } from "./bazar.interface";
 
-const messSchema = new Schema<TMess>(
+const bazarSchema = new Schema<TBazar>(
   {
-    name: {
+    date: {
       type: String,
       required: true,
     },
-    active_month: {
+    amount: {
+      type: Number,
+      required: true,
+    },
+    list: {
+      type: String,
+    },
+    month: {
       type: Schema.Types.ObjectId,
       ref: "Month",
     },
     manager: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
+    },
+    mess: {
+      type: Schema.Types.ObjectId,
+      ref: "Mess",
       required: true,
     },
     members: [
@@ -26,6 +38,6 @@ const messSchema = new Schema<TMess>(
   { timestamps: true }
 );
 
-const MessModel = model<TMess, TMessModel>("Mess", messSchema);
+const BazarModel = model<TBazar, TBazarModel>("Bazar", bazarSchema);
 
-export default MessModel;
+export default BazarModel;

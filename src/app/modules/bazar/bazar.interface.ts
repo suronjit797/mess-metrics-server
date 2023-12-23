@@ -1,10 +1,13 @@
 import { Model, ObjectId } from "mongoose";
 
-export type TMess = {
-  name: string;
+export type TBazar = {
+  date: string;
+  amount: number;
+  list?: string;
   members: ObjectId[];
   manager: ObjectId;
-  active_month: ObjectId;
+  month: ObjectId;
+  mess: ObjectId;
 };
 
-export type TMessModel = Model<TMess, Record<string, unknown>>;
+export type TBazarModel = Model<TBazar, Record<string, unknown>>;
