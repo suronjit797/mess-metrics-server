@@ -9,6 +9,9 @@ import { addMemberZod, changeManagerZod, createMessZod, removeMemberZod, updateM
 const actionsRouter = express.Router();
 const { admin, manager, member, viceManager } = userRole;
 
+
+
+// !not valid have to remove or modify 
 // meal
 actionsRouter.post("/add-meal", auth(), mealActionController.addMeal);
 actionsRouter.get("/meal-by-date", auth(), mealActionController.getMealByDate);
@@ -16,8 +19,11 @@ actionsRouter.put("/meal/:id", auth(), mealActionController.updateMeal);
 
 // mess Account
 
+// todo: already add [meal cost] 
 actionsRouter.get("/mess-account", auth(), messAccountActionController.getMessAccount);
 
-actionsRouter.put("/add-meal-cost/:id", auth(), messAccountActionController.addTotalMealCost);
+
+// params
+// actionsRouter.put("/add-meal-cost/:id", auth(), messAccountActionController.addTotalMealCost);
 
 export default actionsRouter;
