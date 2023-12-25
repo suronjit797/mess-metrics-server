@@ -63,3 +63,49 @@ export const getSingle: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateMeal: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await mealService.updateMeal_service(req.user, req.body);
+
+    const payload = {
+      success: true,
+      message: "Meal Data updated successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const removeSingle: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await mealService.removeSingle_service(req.user, req.params.id);
+
+    const payload = {
+      success: true,
+      message: "Meal removed successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeMulti: RequestHandler = async (req, res, next) => {
+  try {
+    const data = await mealService.removeMulti_service(req.user, req.body.ids);
+
+    const payload = {
+      success: true,
+      message: "Meal  removed successfully",
+      data,
+    };
+    return sendResponse(res, httpStatus.OK, payload);
+  } catch (error) {
+    next(error);
+  }
+};

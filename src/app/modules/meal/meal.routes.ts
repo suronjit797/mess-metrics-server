@@ -10,32 +10,11 @@ const { admin, manager, member, viceManager } = userRole;
 // !will be accessible only by admin or superAdmin
 mealRouter.get("/", auth(), mealController.getAll);
 mealRouter.post("/", auth(), mealController.create);
+mealRouter.put("/", auth(), mealController.updateMeal);
+mealRouter.post("/remove-many", auth(), mealController.removeMulti);
 
 // with params
-mealRouter.get("/:id", auth(), mealController.getAll);
-
-
-
-// mealRouter.get("/members", auth(), messController.getMembers);
-// mealRouter.post("/", auth(member, manager), validatorMiddleware(createMessZod), messController.create);
-// mealRouter.post("/delete-many", messController.removeMany);
-// mealRouter.put(
-//   "/change-manager/:id",
-//   validatorMiddleware(changeManagerZod),
-//   auth(admin, manager),
-//   messController.changeManager
-// );
-
-// mealRouter.post(
-//   "/remove-members/:id",
-//   auth(admin, manager),
-//   validatorMiddleware(removeMemberZod),
-//   messController.removeMembers
-// );
-// mealRouter.post("/add-member/:id", auth(admin, manager), validatorMiddleware(addMemberZod), messController.addMembers);
-
-// mealRouter.get("/:id", auth(), messController.getSingle);
-// mealRouter.put("/:id", auth(admin, manager, viceManager), validatorMiddleware(updateMessZod), messController.update);
-// mealRouter.delete("/:id", auth(admin, manager), messController.remove);
+mealRouter.get("/:id", auth(), mealController.getSingle);
+mealRouter.delete("/:id", auth(), mealController.getSingle);
 
 export default mealRouter;
