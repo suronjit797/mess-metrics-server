@@ -25,7 +25,10 @@ const messAccount = {
 export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload): Promise<TMessAccount> => {
   try {
     // bazar list
-    const mess = await MessModel.findById(user.mess);
+    const mess = await MessModel.findById(user.mess).populate({
+      path: "manager",
+      select: "-password",
+    });
     if (!mess) {
       throw new ApiError(httpStatus.BAD_REQUEST, "Mess not found");
     }
@@ -35,8 +38,10 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
     const bazarList = await BazarModel.find({ mess: user.mess, month: user.activeMonth });
     const totalMealCost = bazarList.reduce((accumulator, bazar) => accumulator + bazar.amount, 0);
     // total meal
-    const mealList = await MealModel.find({ mess: user.mess, month: user.activeMonth });
+    const mealList = await MealModel.find({ mess: user.mess, activeMonth: user.activeMonth });
     const totalMeal = mealList.reduce((accumulator, meal) => accumulator + meal.meal, 0);
+    console.log({ totalMeal, totalMealCost });
+    const mealRate = totalMeal > 0 && totalMealCost > 0 ? Number(totalMealCost / totalMeal) : 0;
 
     // shared cost
     const sharedCostList = await SharedCostModel.find({ mess: user.mess, month: user.activeMonth });
@@ -46,10 +51,22 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
     // todo add all cost to find total cost
     const totalCost = Number(totalMealCost + sharedCost);
 
-    // replace other accounts
-    const data = { ...messAccount, totalCost, totalMealCost, sharedCost, mess, month, totalMeal, sharedCostPerPerson };
+    // balance
 
-    console.log(data);
+    // replace other accounts
+    const data = {
+      ...messAccount,
+      totalCost,
+      totalMealCost,
+      sharedCost,
+      mess,
+      month,
+      totalMeal,
+      sharedCostPerPerson,
+      mealRate,
+    };
+
+    // console.log(data);
 
     return data;
   } catch (error) {
