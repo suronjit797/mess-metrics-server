@@ -9,6 +9,7 @@ import { userRole } from "../../../constants/userConstants";
 import PhoneBookModel from "../phoneBook/phoneBook.model";
 import MonthModel from "../month/month.model";
 import { TUser } from "../user/user.interface";
+import * as month from "../month/month.service";
 
 export const create_service = async (body: any, user: CustomJwtPayload | JwtPayload): Promise<TMess | null> => {
   // check if already in mess
@@ -17,7 +18,10 @@ export const create_service = async (body: any, user: CustomJwtPayload | JwtPayl
     throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
   }
   if (manager.mess) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "You are already in a mess");
+    const mess = await MessModel.findById(user.mess);
+    if (mess) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "You are already in a mess");
+    }
   }
 
   const session = await UserModel.startSession();
@@ -32,21 +36,18 @@ export const create_service = async (body: any, user: CustomJwtPayload | JwtPayl
 
     // create mess
     const data = await MessModel.create([newMess], { session });
-
-    // create month
-    await MonthModel.create([{ name: body.month, mess: data[0]._id }]);
-
     // update user
     const updateUserBody = { mess: data[0]._id, role: userRole.manager };
-    await UserModel.findByIdAndUpdate(user.userId, updateUserBody, { new: true, session });
+    const updatedUser = await UserModel.findByIdAndUpdate(user.userId, updateUserBody, { new: true, session });
 
-    // // add in phone book
-    // const newPhoneBook = { user: manager._id, name: manager.name, phone: manager.phone, mess: data[0]._id };
-    // await PhoneBookModel.create([newPhoneBook], { session });
+    // add in phone book
+    const newPhoneBook = { user: manager._id, name: manager.name, phone: manager.phone, mess: data[0]._id };
+    await PhoneBookModel.create([newPhoneBook], { session });
 
-    // commit transaction
     await session.commitTransaction();
     session.endSession();
+
+    await month.create_service({ name: body.month }, updatedUser);
 
     return data[0];
   } catch (error) {
@@ -83,7 +84,7 @@ export const update_service = async (id: string, payload: TMess): Promise<TMess 
   return data;
 };
 
-export const remove_service = async (id: string): Promise<TMess | null> => {
+export const remove_service = async (id: string): Promise<any> => {
   const data = await MessModel.findByIdAndDelete(id);
   await UserModel.updateMany({ mess: id }, { mess: null, role: userRole.member });
   await MonthModel.deleteMany({ mess: id });

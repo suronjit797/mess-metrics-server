@@ -11,6 +11,11 @@ const phoneBookSchema = new Schema<TPhoneBook>(
       type: String,
       required: true,
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     mess: {
       type: Schema.Types.ObjectId,
       ref: "Mess",

@@ -9,13 +9,15 @@ import httpStatus from "http-status";
 import UserModel from "../user/user.model";
 import MemberAccountModel from "../userAccount/userAccount.model";
 
-export const create_service = async (
+export const create_service:any = async (
   payload: Partial<TMonth>,
   user: CustomJwtPayload | JwtPayload
 ): Promise<TMonth | null> => {
   // start session
   const session = await mongoose.startSession();
   session.startTransaction();
+
+  console.log({user})
 
   if (!user.mess) {
     throw new Error("User is not in a mess");
@@ -78,7 +80,7 @@ export const getSingle_service = async (id: string): Promise<TMonth | null> => {
 export const update_service = async (id: string, payload: TMonth): Promise<TMonth | null> => {
   return await MonthModel.findByIdAndUpdate(id, payload, { new: true });
 };
-export const remove_service = async (id: string): Promise<TMonth | null> => {
+export const remove_service = async (id: string): Promise<any> => {
   const data = await MonthModel.findByIdAndDelete(id);
   return data;
 };
