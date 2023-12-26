@@ -8,14 +8,14 @@ import ApiError from "../../../../ApiError";
 import httpStatus from "http-status";
 import MonthModel from "../../month/month.model";
 import MealModel from "../../meal/meal.model";
-
+import DepositModel from "../../deposit/deposit.model";
 
 const messAccount = {
-  balance: 0,
-  totalDeposit: 0,
+  balance: 0, //done
+  totalDeposit: 0, //done
   totalMealCost: 0, //done
   totalMeal: 0, //done
-  mealRate: 0,
+  mealRate: 0,  //done
   totalIndividualCost: 0,
   sharedCost: 0, //done
   sharedCostPerPerson: 0, //done
@@ -25,26 +25,34 @@ const messAccount = {
 export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload): Promise<TMessAccount> => {
   try {
     // bazar list
-    const mess = await MessModel.findById(user.mess).populate([{
-      path: "manager",
-      select: "-password",
-    }, {
-      path: "members",
-      select: "-password",
-    }]);
+    const mess = await MessModel.findById(user.mess).populate([
+      {
+        path: "manager",
+        select: "-password",
+      },
+      {
+        path: "members",
+        select: "-password",
+      },
+    ]);
     if (!mess) {
       throw new ApiError(httpStatus.BAD_REQUEST, "Mess not found");
     }
     // const membersCount = await MemberAccountModel.countDocuments({ mess: user.mess, month: user.activeMonth });
     const membersCount = mess.members?.length || 1;
     const month = await MonthModel.findById(user.activeMonth);
+
     // total meal cost
     const bazarList = await BazarModel.find({ mess: user.mess, month: user.activeMonth });
     const totalMealCost = bazarList.reduce((accumulator, bazar) => accumulator + bazar.amount, 0);
+
+    // total meal cost
+    const depositList = await DepositModel.find({ mess: user.mess, month: user.activeMonth });
+    const totalDeposit = depositList.reduce((accumulator, deposit) => accumulator + deposit.amount, 0);
+
     // total meal
     const mealList = await MealModel.find({ mess: user.mess, activeMonth: user.activeMonth });
     const totalMeal = mealList.reduce((accumulator, meal) => accumulator + meal.meal, 0);
-    console.log({ totalMeal, totalMealCost });
     const mealRate = totalMeal > 0 && totalMealCost > 0 ? Number(totalMealCost / totalMeal) : 0;
 
     // shared cost
@@ -58,6 +66,7 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
     const totalCost = Number(totalMealCost + sharedCost);
 
     // balance
+    const balance = totalDeposit - totalCost;
 
     // replace other accounts
     const data = {
@@ -70,6 +79,8 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
       totalMeal,
       sharedCostPerPerson,
       mealRate,
+      totalDeposit,
+      balance,
     };
 
     // console.log(data);
