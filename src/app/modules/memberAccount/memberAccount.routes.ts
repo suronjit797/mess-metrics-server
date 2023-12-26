@@ -1,9 +1,9 @@
 import express from "express";
-import * as memberAccountController from "./userAccount.controller";
+import * as memberAccountController from "./memberAccount.controller";
 import { validatorMiddleware } from "../../middleware/validatorMiddleware";
 import { auth } from "../../middleware/auth";
 import { userRole } from "../../../constants/userConstants";
-import { createMessAccountCoZod, updateMessAccountCoZod } from "./userAccount.validation";
+import { createMessAccountCoZod, updateMessAccountCoZod } from "./memberAccount.validation";
 
 const memberAccountCoRouter = express.Router();
 const { admin, manager, member, viceManager } = userRole;

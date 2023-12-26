@@ -3,7 +3,6 @@ import userRouter from "./modules/user/user.routes";
 import messRouter from "./modules/mess/mess.routes";
 import monthRouter from "./modules/month/month.routes";
 import phoneBookRouter from "./modules/phoneBook/phoneBook.routes";
-import personalAccountRouter from "./modules/personalAccount/personalAccount.routes";
 import actionsRouter from "./modules/actions/actions.routes";
 import bazarRouter from "./modules/bazar/bazar.routes";
 import sharedCostRouter from "./modules/sharedCost/sharedCost.routes";
@@ -16,7 +15,6 @@ const moduleRoute = [
   { path: "/mess", routes: messRouter },
   { path: "/month", routes: monthRouter },
   { path: "/phoneBook", routes: phoneBookRouter },
-  { path: "/personalAccount", routes: personalAccountRouter },
   { path: "/actions", routes: actionsRouter },
 
   // cost

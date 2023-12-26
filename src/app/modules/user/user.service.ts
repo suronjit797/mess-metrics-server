@@ -6,8 +6,9 @@ import UserModel from "./user.model";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
-import { TMemberAccount } from "../userAccount/userAccount.interface";
-import MemberAccountModel from "../userAccount/userAccount.model";
+import { TMemberAccount } from "../memberAccount/memberAccount.interface";
+import MemberAccountModel from "../memberAccount/memberAccount.model";
+
 
 type LoginPayload = {
   email: string;
@@ -83,7 +84,7 @@ export const update_service = async (id: string, payload: TUser): Promise<TUser 
   const data = await UserModel.findByIdAndUpdate(id, payload, { new: true });
   return data;
 };
-export const remove_service = async (id: string): Promise<TUser | null> => {
+export const remove_service = async (id: string): Promise<any> => {
   const data = await UserModel.findByIdAndDelete(id);
   return data;
 };

@@ -1,11 +1,11 @@
 import { RequestHandler } from "express";
-import * as memberAccountService from "./userAccount.service";
+import * as memberAccountService from "./memberAccount.service";
 import sendResponse from "../../../shared/sendResponse";
 import httpStatus from "http-status";
 import ApiError from "../../../ApiError";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
-import MemberAccountModel from "./userAccount.model";
+import MemberAccountModel from "./memberAccount.model";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {

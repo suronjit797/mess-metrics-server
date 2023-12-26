@@ -7,7 +7,7 @@ import MessModel from "../mess/mess.model";
 import ApiError from "../../../ApiError";
 import httpStatus from "http-status";
 import UserModel from "../user/user.model";
-import MemberAccountModel from "../userAccount/userAccount.model";
+import MemberAccountModel from "../memberAccount/memberAccount.model";
 
 export const create_service:any = async (
   payload: Partial<TMonth>,
@@ -47,12 +47,6 @@ export const create_service:any = async (
     }));
 
     await MemberAccountModel.create(memberAccountEntries, { session });
-
-    const newMessAccount = {
-      month: month[0]._id,
-      mess: user.mess,
-    };
-
     await UserModel.updateMany({ mess: mess._id }, { $set: { activeMonth: month[0]._id } }, { session });
 
     await session.commitTransaction();

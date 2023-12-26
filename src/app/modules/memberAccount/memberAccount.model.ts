@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { TMemberAccount, TMemberAccountModel } from "./userAccount.interface";
+import { TMemberAccount, TMemberAccountModel } from "./memberAccount.interface";
 
 const memberAccountSchema = new Schema<TMemberAccount>(
   {

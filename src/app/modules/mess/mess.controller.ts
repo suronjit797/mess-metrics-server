@@ -120,7 +120,7 @@ export const remove: RequestHandler = async (req, res, next) => {
 
 export const removeMany: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messService.removeMany_service(req.body?.ids);
+    const data = await messService.removeMany_service(req.body?.ids, req.user);
 
     const payload = {
       success: true,
@@ -135,7 +135,7 @@ export const removeMany: RequestHandler = async (req, res, next) => {
 
 export const removeMembers: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messService.removeMember_service(req.params.id, req.body?.ids);
+    const data = await messService.removeMember_service(req.params.id, req.body?.ids, req.user);
 
     const payload = {
       success: true,
@@ -150,7 +150,7 @@ export const removeMembers: RequestHandler = async (req, res, next) => {
 
 export const addMembers: RequestHandler = async (req, res, next) => {
   try {
-    const data = await messService.addMember_service(req.params.id, req.body);
+    const data = await messService.addMember_service(req.params.id, req.body, req.user);
 
     const payload = {
       success: true,

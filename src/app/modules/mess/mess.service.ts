@@ -10,6 +10,9 @@ import PhoneBookModel from "../phoneBook/phoneBook.model";
 import MonthModel from "../month/month.model";
 import { TUser } from "../user/user.interface";
 import * as month from "../month/month.service";
+import mongoose from "mongoose";
+import MemberAccountModel from "../memberAccount/memberAccount.model";
+
 
 export const create_service = async (body: any, user: CustomJwtPayload | JwtPayload): Promise<TMess | null> => {
   // check if already in mess
@@ -24,7 +27,7 @@ export const create_service = async (body: any, user: CustomJwtPayload | JwtPayl
     }
   }
 
-  const session = await UserModel.startSession();
+  const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
@@ -92,32 +95,39 @@ export const remove_service = async (id: string): Promise<any> => {
   return data;
 };
 
-export const removeMany_service = async (ids: string[]): Promise<any> => {
+export const removeMany_service = async (ids: string[], user: JwtPayload | CustomJwtPayload): Promise<any> => {
   const data = await MessModel.deleteMany(ids);
   return data;
 };
 
-export const removeMember_service = async (id: string, membersIds: string[]): Promise<any> => {
+export const removeMember_service = async (
+  id: string,
+  membersIds: string[],
+  user: JwtPayload | CustomJwtPayload
+): Promise<any> => {
   const isMessExist = await MessModel.findById(id);
 
   if (!isMessExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "Mess not found");
   }
 
-  const user = await UserModel.find({ _id: { $in: membersIds }, role: userRole.manager });
+  const manager = await UserModel.find({ _id: { $in: membersIds }, role: userRole.manager });
 
-  if (user?.length) {
+  if (manager?.length) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Manager cannot be removed");
   }
+
   await UserModel.updateMany({ _id: membersIds }, { mess: null });
   const data = await MessModel.findByIdAndUpdate(id, { $pull: { members: { $in: membersIds } } }, { new: true });
   await PhoneBookModel.deleteMany({ user: membersIds });
+  await MemberAccountModel.deleteMany({ user: membersIds, month: user.activeMonth, mess: user.mess });
   return data;
 };
 
 export const addMember_service = async (
   id: string,
-  payload: { email: string; phone: string }
+  payload: { email: string; phone: string },
+  user: CustomJwtPayload | JwtPayload
 ): Promise<TMess | null> => {
   const isMessExist = await MessModel.findById(id);
 
@@ -130,10 +140,21 @@ export const addMember_service = async (
     throw new ApiError(httpStatus.NOT_FOUND, "Member not found");
   }
   if (member?.mess) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Member already in a mess");
+    const mess = await MessModel.findById(member?.mess);
+    if (mess) {
+      throw new ApiError(httpStatus.BAD_REQUEST, "Member already in a mess");
+    }
   }
 
   await UserModel.findByIdAndUpdate(member._id, { mess: id });
+
+  const memberAccountEntries = {
+    month: user.activeMonth,
+    mess: user.mess,
+    user: member._id,
+  };
+
+  await MemberAccountModel.create(memberAccountEntries);
 
   const data = await MessModel.findByIdAndUpdate(id, { $push: { members: member._id } }, { new: true });
 

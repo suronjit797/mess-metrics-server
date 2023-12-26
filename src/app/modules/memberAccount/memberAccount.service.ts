@@ -1,6 +1,6 @@
 import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
-import MemberAccountModel from "./userAccount.model";
-import { TMemberAccount } from "./userAccount.interface";
+import MemberAccountModel from "./memberAccount.model";
+import { TMemberAccount } from "./memberAccount.interface";
 import { JwtPayload } from "jsonwebtoken";
 
 export const create_service = async (
@@ -31,7 +31,7 @@ export const getSingle_service = async (id: string): Promise<TMemberAccount | nu
 export const update_service = async (id: string, payload: TMemberAccount): Promise<TMemberAccount | null> => {
   return await MemberAccountModel.findByIdAndUpdate(id, payload, { new: true });
 };
-export const remove_service = async (id: string): Promise<TMemberAccount | null> => {
+export const remove_service = async (id: string): Promise<any> => {
   const data = await MemberAccountModel.findByIdAndDelete(id);
   return data;
 };
