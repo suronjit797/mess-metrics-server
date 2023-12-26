@@ -7,6 +7,7 @@ import { userRole } from "../../../constants/userConstants";
 import ApiError from "../../../ApiError";
 import httpStatus from "http-status";
 import MessModel from "../mess/mess.model";
+import UserModel from "../user/user.model";
 
 const { ObjectId } = Types;
 
@@ -28,14 +29,22 @@ export const create_service = async (
   const { mess, activeMonth } = jwtPayload;
   const { date, meals } = payload;
 
-  const mealDocuments = meals.map(({ user, meal }) => ({
-    date,
-    mess,
-    activeMonth,
-    user: new ObjectId(user),
-    meal,
-  }));
-
+  console.log(meals);
+  const mealDocuments = await Promise.all(
+    meals.map(async ({ id, meal }) => {
+      const isExist = await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(jwtPayload.mess) });
+      if (!isExist) {
+        throw new ApiError(httpStatus.NOT_FOUND, `User not found with this id "${id}" in your mess`);
+      }
+      return {
+        date,
+        mess,
+        activeMonth,
+        user: new ObjectId(id),
+        meal,
+      };
+    })
+  );
   const meal = await MealModel.insertMany(mealDocuments);
   return meal;
 };
@@ -64,14 +73,29 @@ export const updateMeal_service = async (
   const { mess, activeMonth } = jwtPayload;
   const { date, meals } = payload;
 
-  const bulkUpdateOperations: any = meals.map(({ user, meal }) => ({
-    updateOne: {
-      // filter: { mess: new ObjectId(mess), activeMonth: new ObjectId(activeMonth), user: new ObjectId(user), date },
-      filter: { mess, activeMonth, user, date },
-      update: { $set: { meal } },
-      upsert: true,
-    },
-  }));
+  const bulkUpdateOperations:any = await Promise.all(
+    meals.map(async ({ id, meal }) => {
+      const isExist = await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(jwtPayload.mess) });
+      if (!isExist) {
+        throw new ApiError(httpStatus.NOT_FOUND, `User not found with this id "${id}" in your mess`);
+      }
+      return {
+        updateOne: {
+          filter: { mess, activeMonth, user: id, date },
+          update: { $set: { meal } },
+          upsert: true,
+        },
+      };
+    })
+  );
+
+  // const bulkUpdateOperations: any = meals.map(({ id, meal }) => ({
+  //   updateOne: {
+  //     filter: { mess, activeMonth, user: id, date },
+  //     update: { $set: { meal } },
+  //     upsert: true,
+  //   },
+  // }));
 
   const meal = await MealModel.bulkWrite(bulkUpdateOperations);
 

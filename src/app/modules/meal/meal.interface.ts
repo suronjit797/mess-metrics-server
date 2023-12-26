@@ -15,7 +15,7 @@ export type TMeal = {
 export type TMealModel = Model<TMeal, Record<string, unknown>>;
 
 export type TMealBody = {
-  user: string;
+  id: string;
   meal: number;
 };
 export type TCreateMealPayload = {
