@@ -36,6 +36,6 @@ const individualCostSchema = new Schema<TIndividualCost>(
   { timestamps: true }
 );
 
-const IndividualCostModel = model<TIndividualCost, TIndividualCostModel>("Individual", individualCostSchema);
+const IndividualCostModel = model<TIndividualCost, TIndividualCostModel>("IndividualCost", individualCostSchema);
 
 export default IndividualCostModel;

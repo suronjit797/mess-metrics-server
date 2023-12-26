@@ -9,6 +9,7 @@ import httpStatus from "http-status";
 import MonthModel from "../../month/month.model";
 import MealModel from "../../meal/meal.model";
 import DepositModel from "../../deposit/deposit.model";
+import IndividualCostModel from "../../individualCost/individualCost.model";
 
 const messAccount = {
   balance: 0, //done
@@ -60,10 +61,14 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
     const sharedCost = sharedCostList.reduce((accumulator, bazar) => accumulator + bazar.amount, 0);
     const sharedCostPerPerson = sharedCost > 0 ? Number(sharedCost / membersCount) : 0;
 
+    // individual cost
+    const individualCostList = await IndividualCostModel.find({ mess: user.mess, month: user.activeMonth });
+    const totalIndividualCost = individualCostList.reduce((accumulator, cost) => accumulator + cost.amount, 0);
+
     console.log(mess, membersCount);
 
     // todo add all cost to find total cost
-    const totalCost = Number(totalMealCost + sharedCost);
+    const totalCost = Number(totalMealCost + sharedCost + totalIndividualCost);
 
     // balance
     const balance = totalDeposit - totalCost;
@@ -81,6 +86,7 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
       mealRate,
       totalDeposit,
       balance,
+      totalIndividualCost
     };
 
     // console.log(data);
