@@ -122,7 +122,7 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
                     $and: [
                       { $eq: ["$user", "$$userId"] },
                       { $eq: ["$mess", "$$mess"] },
-                      { $eq: ["$month", user.activeMonth] }, //issue....
+                      { $eq: ["$month", user.activeMonth] },
                     ],
                   },
                 },
@@ -135,6 +135,32 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
               },
             ],
             as: "deposits",
+          },
+        },
+        {
+          $lookup: {
+            from: "individualcosts",
+            let: { userId: "$user", mess: user.mess, activeMonth: user.activeMonth },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$user", "$$userId"] },
+                      { $eq: ["$mess", "$$mess"] },
+                      { $eq: ["$month", user.activeMonth] },
+                    ],
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: "$user",
+                  amount: { $sum: "$amount" },
+                },
+              },
+            ],
+            as: "individualCost",
           },
         },
 
@@ -170,6 +196,7 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
           $addFields: {
             meal: { $arrayElemAt: ["$meals.totalMeals", 0] },
             deposit: { $arrayElemAt: ["$deposits.amount", 0] },
+            individualCost: { $arrayElemAt: ["$individualCost.amount", 0] },
             user: { $arrayElemAt: ["$user", 0] },
             mess: { $arrayElemAt: ["$mess.name", 0] },
             month: { $arrayElemAt: ["$month", 0] },
