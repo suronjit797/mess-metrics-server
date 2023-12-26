@@ -76,14 +76,15 @@ export const getSingle_service = async (id: string): Promise<TMess | null> => {
   return data;
 };
 
+// ! have to remove json size mess,month
+
 export const getMessMembersWithServices_service = async (user: CustomJwtPayload | JwtPayload): Promise<TUser[]> => {
   if (user.mess && user.activeMonth) {
-    console.log(user);
     try {
       const membersWithMeals = await MemberAccountModel.aggregate([
         {
           $match: { mess: user.mess, month: user.activeMonth },
-        },        
+        },
         {
           $lookup: {
             from: "meals",
@@ -125,7 +126,7 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
                     ],
                   },
                 },
-              },              
+              },
               {
                 $group: {
                   _id: "$user",
@@ -164,7 +165,6 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
             pipeline: [{ $project: { name: 1, email: 1, phone: 1, role: 1, dateOfBirth: 1 } }],
           },
         },
-
 
         {
           $addFields: {
