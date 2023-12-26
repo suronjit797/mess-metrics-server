@@ -12,7 +12,11 @@ const { ObjectId } = Types;
 
 export const getAll_service = async (pagination: IPagination, filter: any): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
-  const data = await MealModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
+  const data = await MealModel.find(filter)
+    .limit(limit)
+    .skip(skip)
+    .sort(sortCondition)
+    .populate({ path: "user", select: "name email role" });
   const total = await MealModel.countDocuments(filter);
   return { meta: { page, limit, total }, data };
 };
