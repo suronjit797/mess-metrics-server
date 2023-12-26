@@ -3,9 +3,9 @@ import { TMemberAccount, TMemberAccountModel } from "./memberAccount.interface";
 
 const memberAccountSchema = new Schema<TMemberAccount>(
   {
-    meal: { type: Number, required: true, default: 0 },
-    deposit: { type: Number, required: true, default: 0 },
-    individualCost: { type: Number, required: true, default: 0 },
+    // meal: { type: Number, required: true, default: 0 },
+    // deposit: { type: Number, required: true, default: 0 },
+    // individualCost: { type: Number, required: true, default: 0 },
     mess: {
       type: Schema.Types.ObjectId,
       ref: "Mess",

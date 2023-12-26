@@ -13,6 +13,7 @@ import * as month from "../month/month.service";
 import mongoose from "mongoose";
 import MemberAccountModel from "../memberAccount/memberAccount.model";
 
+const { ObjectId } = mongoose.Types;
 
 export const create_service = async (body: any, user: CustomJwtPayload | JwtPayload): Promise<TMess | null> => {
   // check if already in mess
@@ -73,6 +74,125 @@ export const getSingle_service = async (id: string): Promise<TMess | null> => {
     { path: "members", select: "-password" },
   ]);
   return data;
+};
+
+export const getMessMembersWithServices_service = async (user: CustomJwtPayload | JwtPayload): Promise<TUser[]> => {
+  if (user.mess && user.activeMonth) {
+    console.log(user);
+    try {
+      const membersWithMeals = await MemberAccountModel.aggregate([
+        {
+          $match: { mess: user.mess, month: user.activeMonth },
+        },        
+        {
+          $lookup: {
+            from: "meals",
+            let: { userId: "$user", mess: user.mess, activeMonth: user.activeMonth },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$user", "$$userId"] },
+                      { $eq: ["$mess", "$$mess"] },
+                      { $eq: ["$activeMonth", "$$activeMonth"] },
+                    ],
+                  },
+                },
+              },
+              {
+                $group: {
+                  _id: "$user",
+                  totalMeals: { $sum: "$meal" },
+                },
+              },
+            ],
+            as: "meals",
+          },
+        },
+        {
+          $lookup: {
+            from: "deposits",
+            let: { userId: "$user", mess: user.mess, activeMonth: user.activeMonth },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$user", "$$userId"] },
+                      { $eq: ["$mess", "$$mess"] },
+                      { $eq: ["$month", user.activeMonth] }, //issue....
+                    ],
+                  },
+                },
+              },              
+              {
+                $group: {
+                  _id: "$user",
+                  amount: { $sum: "$amount" },
+                },
+              },
+            ],
+            as: "deposits",
+          },
+        },
+
+        // general look up
+        {
+          $lookup: {
+            from: "messes",
+            localField: "mess",
+            foreignField: "_id",
+            as: "mess",
+          },
+        },
+        {
+          $lookup: {
+            from: "months",
+            localField: "month",
+            foreignField: "_id",
+            as: "month",
+            pipeline: [{ $project: { name: 1, year: 1, isActive: 1 } }],
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user",
+            pipeline: [{ $project: { name: 1, email: 1, phone: 1, role: 1, dateOfBirth: 1 } }],
+          },
+        },
+
+
+        {
+          $addFields: {
+            meal: { $arrayElemAt: ["$meals.totalMeals", 0] },
+            deposit: { $arrayElemAt: ["$deposits.amount", 0] },
+            user: { $arrayElemAt: ["$user", 0] },
+            mess: { $arrayElemAt: ["$mess.name", 0] },
+            month: { $arrayElemAt: ["$month", 0] },
+          },
+        },
+        {
+          $project: {
+            createdAt: 0,
+            updatedAt: 0,
+            __v: 0,
+            meals: 0,
+            deposits: 0,
+          },
+        },
+      ]);
+
+      return membersWithMeals;
+    } catch (error) {
+      console.error("Error fetching mess members with meals:", error);
+      throw error;
+    }
+  }
+  return [];
 };
 
 export const getMessMembers_service = async (user: CustomJwtPayload | JwtPayload): Promise<TUser[]> => {
