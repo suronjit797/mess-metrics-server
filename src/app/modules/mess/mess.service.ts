@@ -194,9 +194,13 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
 
         {
           $addFields: {
-            meal: { $arrayElemAt: ["$meals.totalMeals", 0] },
-            deposit: { $arrayElemAt: ["$deposits.amount", 0] },
-            individualCost: { $arrayElemAt: ["$individualCost.amount", 0] },
+            // meal: { $arrayElemAt: ["$meals.totalMeals", 0] },
+            // deposit: { $arrayElemAt: ["$deposits.amount", 0] },
+            // individualCost: { $arrayElemAt: ["$individualCost.amount", 0] },
+            
+            meal: { $ifNull: [{ $arrayElemAt: ["$meals.totalMeals", 0] }, 0] },
+            deposit: { $ifNull: [{ $arrayElemAt: ["$deposits.amount", 0] }, 0] },
+            individualCost: { $ifNull: [{ $arrayElemAt: ["$individualCost.amount", 0] }, 0] },
             user: { $arrayElemAt: ["$user", 0] },
             mess: { $arrayElemAt: ["$mess.name", 0] },
             month: { $arrayElemAt: ["$month", 0] },
