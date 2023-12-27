@@ -90,6 +90,8 @@ export const getMembersAccount_service = async (
 ): Promise<any> => {
   const { userId, monthId } = params;
 
+  const mId = monthId ? monthId : user.activeMonth
+
   const isAuthority = user.role === userRole.superAdmin || user.role === userRole.admin;
 
   const mess = await MessModel.findById(user.mess).populate([
@@ -117,9 +119,9 @@ export const getMembersAccount_service = async (
 
   let monthData: any;
   if (isAuthority) {
-    monthData = await MonthModel.findById(monthId).select({ createdAt: 0, updatedAt: 0, __v: 0 });
+    monthData = await MonthModel.findById(mId).select({ createdAt: 0, updatedAt: 0, __v: 0 });
   } else {
-    monthData = await MonthModel.findOne({ _id: monthId, mess: user.mess }).select({
+    monthData = await MonthModel.findOne({ _id: mId, mess: user.mess }).select({
       createdAt: 0,
       updatedAt: 0,
       __v: 0,
@@ -130,7 +132,7 @@ export const getMembersAccount_service = async (
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid Month");
   }
 
-  const filter = { mess: user.mess, month: new ObjectId(monthId) };
+  const filter = { mess: user.mess, month: new ObjectId(mId) };
 
   console.log(filter);
 
