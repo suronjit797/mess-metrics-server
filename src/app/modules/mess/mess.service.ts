@@ -197,7 +197,7 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
             // meal: { $arrayElemAt: ["$meals.totalMeals", 0] },
             // deposit: { $arrayElemAt: ["$deposits.amount", 0] },
             // individualCost: { $arrayElemAt: ["$individualCost.amount", 0] },
-            
+
             meal: { $ifNull: [{ $arrayElemAt: ["$meals.totalMeals", 0] }, 0] },
             deposit: { $ifNull: [{ $arrayElemAt: ["$deposits.amount", 0] }, 0] },
             individualCost: { $ifNull: [{ $arrayElemAt: ["$individualCost.amount", 0] }, 0] },
@@ -214,6 +214,9 @@ export const getMessMembersWithServices_service = async (user: CustomJwtPayload 
             meals: 0,
             deposits: 0,
           },
+        },
+        {
+          $sort: { "user.name": 1 },
         },
       ]);
 
