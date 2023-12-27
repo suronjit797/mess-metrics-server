@@ -15,10 +15,10 @@ userRouter.get("/profile", auth(), userController.getProfile);
 userRouter.put("/profile", auth(), userController.updateProfile);
 
 // user
-userRouter.get("/", auth(admin, manager), userController.getAll);
+userRouter.get("/", auth(), userController.getAll);
 userRouter.get("/account", auth(), userController.getAccount);
-userRouter.get("/:id", auth(admin), userController.getSingle);
+userRouter.get("/:id", auth(), userController.getSingle);
 userRouter.put("/:id", auth(), validatorMiddleware(userUpdateValidationZod), userController.update);
-userRouter.delete("/:id", auth(admin), userController.remove);
+userRouter.delete("/:id", auth(), userController.remove);
 
 export default userRouter;

@@ -121,12 +121,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
 
 export const getSingle: RequestHandler = async (req, res, next) => {
   try {
-    const data = await userService.getSingle_service(req.params.id);
-
-    if (!data) {
-      throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Server Error");
-    }
-
+    const data = await userService.getSingle_service(req.params.id, req.user);
     const payload = {
       success: true,
       message: "User fetched successfully",
@@ -183,7 +178,6 @@ export const remove: RequestHandler = async (req, res, next) => {
 // user account
 export const getAccount: RequestHandler = async (req, res, next) => {
   try {
-    
     const data = await userService.getAccount_service(req.user);
 
     if (!data) {

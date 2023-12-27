@@ -119,12 +119,22 @@ export const getMessMonth: RequestHandler = async (req, res, next) => {
     if (!req.user?.mess) {
       throw new ApiError(httpStatus.BAD_REQUEST, "User is not in a mess");
     }
-    const data = await monthService.getMessMonth_service(req.user?.mess);
+
+    const pagination = paginationHelper(req.query);
+    const filter = filterHelper(req, new MonthModel(), ["name"]);
+
+    filter.mess = req.user.mess;
+
+    console.log(filter);
+
+    // const data = await monthService.getMessMonth_service(req.user?.mess);
+    const { data, meta } = await monthService.getMessMonth_service(filter, pagination);
 
     const payload = {
       success: true,
       message: "mess Month list fetched successfully",
       data,
+      meta,
     };
     return sendResponse(res, httpStatus.OK, payload);
   } catch (error) {

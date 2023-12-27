@@ -90,7 +90,7 @@ export const getMembersAccount_service = async (
 ): Promise<any> => {
   const { userId, monthId } = params;
 
-  const mId = monthId ? monthId : user.activeMonth
+  const mId = monthId ? monthId : user.activeMonth;
 
   const isAuthority = user.role === userRole.superAdmin || user.role === userRole.admin;
 
@@ -141,8 +141,8 @@ export const getMembersAccount_service = async (
     await Promise.all([
       BazarModel.find(filter),
       DepositModel.find({ ...filter, user: userId }),
-      MealModel.find({ mess: user.mess, activeMonth: user.activeMonth }),
-      MealModel.find({ mess: user.mess, activeMonth: user.activeMonth, user: userId }),
+      MealModel.find({ mess: user.mess, activeMonth: new ObjectId(mId) }),
+      MealModel.find({ mess: user.mess, activeMonth: new ObjectId(mId), user: userId }),
       SharedCostModel.find(filter),
       IndividualCostModel.find({ ...filter, user: userId }),
       MemberAccountModel.countDocuments(filter),

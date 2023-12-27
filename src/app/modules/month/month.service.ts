@@ -9,7 +9,7 @@ import httpStatus from "http-status";
 import UserModel from "../user/user.model";
 import MemberAccountModel from "../memberAccount/memberAccount.model";
 
-export const create_service:any = async (
+export const create_service: any = async (
   payload: Partial<TMonth>,
   user: CustomJwtPayload | JwtPayload
 ): Promise<TMonth | null> => {
@@ -17,7 +17,7 @@ export const create_service:any = async (
   const session = await mongoose.startSession();
   session.startTransaction();
 
-  console.log({user})
+  console.log({ user });
 
   if (!user.mess) {
     throw new Error("User is not in a mess");
@@ -84,9 +84,12 @@ export const removeMany_service = async (ids: string[]): Promise<any> => {
   return data;
 };
 
-export const getMessMonth_service = async (id: string): Promise<TMonth[] | null> => {
-  const data = await MonthModel.find({ mess: id });
-  return data;
+// export const getMessMonth_service = async (id: string): Promise<TMonth[] | null> => {
+export const getMessMonth_service = async (filter: any, pagination: IPagination): Promise<any> => {
+  const { page, limit, skip, sortCondition } = pagination;
+  const data = await MonthModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
+  const total = await MonthModel.countDocuments(filter);
+  return { data, meta: { page, limit, total } };
 };
 
 export const getMessActiveMonth_service = async (id: string): Promise<TMonth | null> => {

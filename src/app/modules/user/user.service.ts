@@ -8,7 +8,10 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces";
 import { TMemberAccount } from "../memberAccount/memberAccount.interface";
 import MemberAccountModel from "../memberAccount/memberAccount.model";
+import { userRole } from "../../../constants/userConstants";
+import mongoose from "mongoose";
 
+const { ObjectId } = mongoose.Types;
 
 type LoginPayload = {
   email: string;
@@ -76,9 +79,11 @@ export const getAll_service = async (pagination: IPagination, filter: any): Prom
   const total = await UserModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };
-export const getSingle_service = async (id: string): Promise<TUser | null> => {
-  const data = await UserModel.findById(id).select({ password: 0 });
-  return data;
+export const getSingle_service = async (id: string, user: CustomJwtPayload | JwtPayload): Promise<any> => {
+  if (user.role === userRole.superAdmin || user.role === userRole.admin) {
+    return await UserModel.findById(id).select({ password: 0 });
+  }
+  return await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(user.mess) }).select({ password: 0 });
 };
 export const update_service = async (id: string, payload: TUser): Promise<TUser | null> => {
   const data = await UserModel.findByIdAndUpdate(id, payload, { new: true });
