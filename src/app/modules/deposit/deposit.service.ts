@@ -15,7 +15,11 @@ export const create_service = async (
 // ! only access own mess
 export const getAll_service = async (pagination: IPagination, filter: any): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
-  const data = await DepositModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
+  const data = await DepositModel.find(filter)
+    .limit(limit)
+    .skip(skip)
+    .sort(sortCondition)
+    .populate({ path: "user", select: "name email role" });
   const total = await DepositModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };
@@ -29,7 +33,8 @@ export const getSingle_service = async (id: string): Promise<TDeposit | null> =>
     {
       path: "manager",
       select: "-password",
-    },{
+    },
+    {
       path: "user",
       select: "-password",
     },
@@ -39,7 +44,6 @@ export const getSingle_service = async (id: string): Promise<TDeposit | null> =>
   ]);
   return data;
 };
-
 
 export const update_service = async (id: string, payload: Partial<TDeposit>): Promise<TDeposit | null> => {
   const data = await DepositModel.findByIdAndUpdate(id, payload, { new: true });

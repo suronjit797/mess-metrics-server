@@ -15,7 +15,11 @@ export const create_service = async (
 // ! only access own mess
 export const getAll_service = async (pagination: IPagination, filter: any): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
-  const data = await IndividualCostModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
+  const data = await IndividualCostModel.find(filter)
+    .limit(limit)
+    .skip(skip)
+    .sort(sortCondition)
+    .populate({ path: "user", select: "name email role" });
   const total = await IndividualCostModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };

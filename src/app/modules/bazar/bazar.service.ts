@@ -15,7 +15,11 @@ export const create_service = async (
 // ! only access own mess
 export const getAll_service = async (pagination: IPagination, filter: any): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
-  const data = await BazarModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
+  const data = await BazarModel.find(filter)
+    .limit(limit)
+    .skip(skip)
+    .sort(sortCondition)
+    .populate({ path: "members", select: "name email role" });
   const total = await BazarModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };
@@ -42,12 +46,10 @@ export const getSingle_service = async (id: string): Promise<TBazar | null> => {
 };
 
 export const getLast_service = async (user: JwtPayload | CustomJwtPayload): Promise<TBazar | null> => {
-  const data = await BazarModel.findOne({ mess: user.mess, month: user.activeMonth })
-    .sort({ createdAt: -1 })
-    .populate({
-      path: "members",
-      select: "-password",
-    });
+  const data = await BazarModel.findOne({ mess: user.mess, month: user.activeMonth }).sort({ createdAt: -1 }).populate({
+    path: "members",
+    select: "-password",
+  });
   return data;
 };
 
