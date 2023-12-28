@@ -85,14 +85,18 @@ export const getMessAccount_service = async (user: JwtPayload | CustomJwtPayload
 };
 
 export const getMembersAccount_service = async (
-  user: JwtPayload | CustomJwtPayload,
+  userPayload: JwtPayload | CustomJwtPayload,
   params: { userId: string; monthId: string }
 ): Promise<any> => {
   const { userId, monthId } = params;
 
-  const mId = monthId ? monthId : user.activeMonth;
+  const mId = monthId ? monthId : userPayload.activeMonth;
+  const isAuthority = userPayload.role === userRole.superAdmin || userPayload.role === userRole.admin;
+  const user = await MemberAccountModel.findOne({ user: userPayload.userId, month: mId });
 
-  const isAuthority = user.role === userRole.superAdmin || user.role === userRole.admin;
+  if (!user) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid user");
+  }
 
   const mess = await MessModel.findById(user.mess).populate([
     { path: "manager", select: "-password" },
@@ -101,20 +105,6 @@ export const getMembersAccount_service = async (
 
   if (!mess && !isAuthority) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid mess");
-  }
-
-  let profile: any;
-
-  if (isAuthority) {
-    profile = await UserModel.findById(userId).select("name email phone role dateOfBirth image");
-  } else {
-    profile = await UserModel.findOne({ _id: userId, mess: user.mess }).select(
-      "name email phone role dateOfBirth image"
-    );
-  }
-
-  if (!profile) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Invalid User");
   }
 
   let monthData: any;
@@ -175,5 +165,5 @@ export const getMembersAccount_service = async (
     mealRate,
   };
 
-  return { ...profile._doc, month };
+  return month;
 };

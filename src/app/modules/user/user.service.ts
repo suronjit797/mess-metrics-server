@@ -80,10 +80,17 @@ export const getAll_service = async (pagination: IPagination, filter: any): Prom
   return { data, meta: { page, limit, total } };
 };
 export const getSingle_service = async (id: string, user: CustomJwtPayload | JwtPayload): Promise<any> => {
-  if (user.role === userRole.superAdmin || user.role === userRole.admin) {
-    return await UserModel.findById(id).select({ password: 0 });
-  }
-  return await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(user.mess) }).select({ password: 0 });
+  return await UserModel.findById(id).select({ password: 0 });
+  // const userAccount = await MemberAccountModel.findOne({ user: user.userId, mont: user.activeMonth });
+  // if (!userAccount) {
+  //   throw new ApiError(httpStatus.BAD_REQUEST, "Invalid user account");
+  // }
+  // if (user.role === userRole.superAdmin || user.role === userRole.admin) {
+  //   return await UserModel.findById(id).select({ password: 0 });
+  // }
+  // return await UserModel.findOne({ _id: new ObjectId(id), mess: userAccount.mess }).select({
+  //   password: 0,
+  // });
 };
 export const update_service = async (id: string, payload: TUser): Promise<TUser | null> => {
   const data = await UserModel.findByIdAndUpdate(id, payload, { new: true });
