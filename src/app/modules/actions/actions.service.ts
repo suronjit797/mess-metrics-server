@@ -92,7 +92,7 @@ export const getMembersAccount_service = async (
 
   const mId = monthId ? monthId : userPayload.activeMonth;
   const isAuthority = userPayload.role === userRole.superAdmin || userPayload.role === userRole.admin;
-  const user = await MemberAccountModel.findOne({ user: userPayload.userId, month: mId });
+  const user = await MemberAccountModel.findOne({ user: userId || userPayload.userId, month: mId });
 
   if (!user) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid user");

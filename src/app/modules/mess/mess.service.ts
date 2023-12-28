@@ -300,7 +300,7 @@ export const addMember_service = async (
     }
   }
 
-  await UserModel.findByIdAndUpdate(member._id, { mess: id });
+  await UserModel.findByIdAndUpdate(member._id, { mess: id, activeMonth: user.activeMonth });
 
   const memberAccountEntries = {
     month: user.activeMonth,

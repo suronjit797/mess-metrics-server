@@ -124,6 +124,7 @@ export const getMessMonth: RequestHandler = async (req, res, next) => {
     const filter = filterHelper(req, new MonthModel(), ["name"]);
 
     filter.mess = req.user.mess;
+    filter.user = req.query.userId || req.user.userId
 
     console.log(filter);
 
@@ -141,6 +142,7 @@ export const getMessMonth: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
 export const getMessActiveMonth: RequestHandler = async (req, res, next) => {
   try {
     if (!req.user?.mess) {

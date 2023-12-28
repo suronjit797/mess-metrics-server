@@ -84,11 +84,16 @@ export const removeMany_service = async (ids: string[]): Promise<any> => {
   return data;
 };
 
-// export const getMessMonth_service = async (id: string): Promise<TMonth[] | null> => {
 export const getMessMonth_service = async (filter: any, pagination: IPagination): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
-  const data = await MonthModel.find(filter).limit(limit).skip(skip).sort(sortCondition);
-  const total = await MonthModel.countDocuments(filter);
+  const memberAccount = await MemberAccountModel.find(filter)
+    .limit(limit)
+    .skip(skip)
+    .select("month")
+    .populate({ path: "month", options: { sortCondition } });
+  const data: any = memberAccount.map((d) => d.month);
+
+  const total = await MemberAccountModel.countDocuments(filter);
   return { data, meta: { page, limit, total } };
 };
 
