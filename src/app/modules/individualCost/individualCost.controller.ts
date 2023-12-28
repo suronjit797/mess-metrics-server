@@ -6,6 +6,7 @@ import ApiError from "../../../ApiError";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
 import IndividualCostModel from "./individualCost.model";
+import { userRole } from "../../../constants/userConstants";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
@@ -30,6 +31,18 @@ export const getAll: RequestHandler = async (req, res, next) => {
   try {
     const pagination = paginationHelper(req.query);
     const filter = filterHelper(req, new IndividualCostModel(), ["name"]);
+
+    if (![userRole.admin, userRole.superAdmin].includes(req.user.role)) {
+      if (!req.user.mess) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
+      }
+      filter.mess = req.user.mess;
+      filter.month = req.user.activeMonth;
+    }
+
+
+    console.log(filter)
+
     const { data, meta } = await individualCostService.getAll_service(pagination, filter);
     const payload = {
       success: true,

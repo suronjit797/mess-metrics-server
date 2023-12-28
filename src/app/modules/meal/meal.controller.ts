@@ -19,6 +19,7 @@ export const getAll: RequestHandler = async (req, res, next) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
       }
       filter.mess = req.user.mess;
+      filter.activeMonth = req.user.activeMonth;
     }
 
     const data = await mealService.getAll_service(pagination, filter);
@@ -78,7 +79,6 @@ export const updateMeal: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const removeSingle: RequestHandler = async (req, res, next) => {
   try {

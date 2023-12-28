@@ -17,7 +17,7 @@ export const getAll_service = async (pagination: IPagination, filter: any): Prom
     .limit(limit)
     .skip(skip)
     .sort(sortCondition)
-    .populate({ path: "user", select: "name email role" });
+    .populate({ path: "user", select: "name email role", options: { sort: { name: 1 } } });
   const total = await MealModel.countDocuments(filter);
   return { meta: { page, limit, total }, data };
 };
@@ -73,7 +73,7 @@ export const updateMeal_service = async (
   const { mess, activeMonth } = jwtPayload;
   const { date, meals } = payload;
 
-  const bulkUpdateOperations:any = await Promise.all(
+  const bulkUpdateOperations: any = await Promise.all(
     meals.map(async ({ id, meal }) => {
       const isExist = await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(jwtPayload.mess) });
       if (!isExist) {

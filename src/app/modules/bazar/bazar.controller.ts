@@ -6,6 +6,7 @@ import ApiError from "../../../ApiError";
 import { paginationHelper } from "../../../helper/paginationHelper";
 import filterHelper from "../../../helper/filterHelper";
 import BazarModel from "./bazar.model";
+import { userRole } from "../../../constants/userConstants";
 
 export const create: RequestHandler = async (req, res, next) => {
   try {
@@ -30,6 +31,14 @@ export const getAll: RequestHandler = async (req, res, next) => {
   try {
     const pagination = paginationHelper(req.query);
     const filter = filterHelper(req, new BazarModel(), ["name"]);
+    if (![userRole.admin, userRole.superAdmin].includes(req.user.role)) {
+      if (!req.user.mess) {
+        throw new ApiError(httpStatus.BAD_REQUEST, "Bad request");
+      }
+      filter.mess = req.user.mess;
+      filter.month = req.user.activeMonth;
+    }
+
     const { data, meta } = await bazarService.getAll_service(pagination, filter);
 
     if (!data) {
@@ -67,7 +76,6 @@ export const getSingle: RequestHandler = async (req, res, next) => {
   }
 };
 
-
 export const getLast: RequestHandler = async (req, res, next) => {
   try {
     const data = await bazarService.getLast_service(req.user);
@@ -81,7 +89,6 @@ export const getLast: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
-
 
 export const update: RequestHandler = async (req, res, next) => {
   try {
