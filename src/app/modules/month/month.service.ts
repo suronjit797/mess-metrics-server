@@ -76,11 +76,13 @@ export const update_service = async (id: string, payload: TMonth): Promise<TMont
 };
 export const remove_service = async (id: string): Promise<any> => {
   const data = await MonthModel.findByIdAndDelete(id);
+  await MemberAccountModel.deleteMany({ month: id });
   return data;
 };
 
 export const removeMany_service = async (ids: string[]): Promise<any> => {
-  const data = await MonthModel.deleteMany(ids);
+  const data = await MonthModel.deleteMany({ _id: { $in: ids } });
+  await MemberAccountModel.deleteMany({ month: { $in: ids } });
   return data;
 };
 
