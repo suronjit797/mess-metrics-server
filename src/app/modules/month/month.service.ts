@@ -86,11 +86,14 @@ export const removeMany_service = async (ids: string[]): Promise<any> => {
 
 export const getMessMonth_service = async (filter: any, pagination: IPagination): Promise<any> => {
   const { page, limit, skip, sortCondition } = pagination;
+
+  console.log({ sortCondition });
   const memberAccount = await MemberAccountModel.find(filter)
     .limit(limit)
     .skip(skip)
     .select("month")
-    .populate({ path: "month", options: { sortCondition } });
+    .sort(sortCondition)
+    .populate({ path: "month" });
   const data: any = memberAccount.map((d) => d.month);
 
   const total = await MemberAccountModel.countDocuments(filter);
