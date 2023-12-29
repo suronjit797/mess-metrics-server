@@ -17,7 +17,7 @@ export const updateIndividualCostZod = z.object({
       date: z.string().optional(),
       amount: z.number().optional(),
       list: z.string().optional(),
-      user: z.string(),
+      user: z.string().optional(),
     })
     .strict(),
 });
