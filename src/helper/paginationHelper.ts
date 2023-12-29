@@ -1,36 +1,36 @@
-import { SortOrder } from 'mongoose'
-import { IPagination, ISortCondition } from '../shared/globalInterfaces'
+import { SortOrder } from "mongoose";
+import { IPagination, ISortCondition } from "../shared/globalInterfaces";
 
 export const pic = <T extends object, K extends keyof T>(obj: T, keys: K[]): Partial<T> => {
-  const findObject: Partial<T> = {}
+  const findObject: Partial<T> = {};
 
   for (const key of keys) {
-    if (obj && Object.prototype.hasOwnProperty.call(obj, key)) {
-      findObject[key] = obj[key]
+    if (obj && Object.prototype.hasOwnProperty.call(obj, key) && obj[key]) {
+      findObject[key] = obj[key];
     }
   }
-  return findObject
-}
+  return findObject;
+};
 
 export const paginationHelper = <T extends Record<string, unknown>>(obj: T): IPagination => {
-  const keys: (keyof T)[] = ['page', 'limit', 'sortOrder', 'sortBy']
-  const options = pic(obj, keys)
+  const keys: (keyof T)[] = ["page", "limit", "sortOrder", "sortBy"];
+  const options = pic(obj, keys);
 
-  const page: number = Math.abs(Number(options.page) || 1)
-  const limit: number = Math.abs(Number(options.limit) || 10)
-  const skip: number = (page - 1) * limit
-  const sortBy: string = (options.sortBy as string) || 'createdAt'
-  let sortOrder: SortOrder = (options.sortOrder as SortOrder) || 'desc'
+  const page: number = Math.abs(Number(options.page) || 1);
+  const limit: number = Math.abs(Number(options.limit) || 10);
+  const skip: number = (page - 1) * limit;
+  const sortBy: string = (options.sortBy as string) || "createdAt";
+  let sortOrder: SortOrder = (options.sortOrder as SortOrder) || "desc";
 
-  const validSortOrderValues = [1, -1, 'asc', 'ascending', 'desc', 'descending']
+  const validSortOrderValues = [1, -1, "asc", "ascending", "desc", "descending"];
 
   if (!validSortOrderValues.includes(sortOrder)) {
-    sortOrder = 'desc'
+    sortOrder = "desc";
   }
 
-  const sortCondition: ISortCondition = {}
+  const sortCondition: ISortCondition = {};
   if (sortBy && sortOrder) {
-    sortCondition[sortBy] = sortOrder as SortOrder
+    sortCondition[sortBy] = sortOrder as SortOrder;
   }
 
   return {
@@ -38,5 +38,5 @@ export const paginationHelper = <T extends Record<string, unknown>>(obj: T): IPa
     limit,
     skip,
     sortCondition,
-  }
-}
+  };
+};
