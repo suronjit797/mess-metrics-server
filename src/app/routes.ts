@@ -9,6 +9,7 @@ import sharedCostRouter from "./modules/sharedCost/sharedCost.routes";
 import mealRouter from "./modules/meal/meal.routes";
 import depositRouter from "./modules/deposit/deposit.routes";
 import individualCostRouter from "./modules/individualCost/individualCost.routes";
+import notificationsRouter from "./modules/notifications/notifications.routes";
 
 const router = express.Router();
 
@@ -19,6 +20,7 @@ const moduleRoute = [
   { path: "/phone-book", routes: phoneBookRouter },
   { path: "/actions", routes: actionsRouter },
   { path: "/deposit", routes: depositRouter },
+  { path: "/notification", routes: notificationsRouter },
 
   // cost
   { path: "/meal", routes: mealRouter },
