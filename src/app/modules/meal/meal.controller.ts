@@ -22,12 +22,13 @@ export const getAll: RequestHandler = async (req, res, next) => {
       filter.activeMonth = req.user.activeMonth;
     }
 
-    const data = await mealService.getAll_service(pagination, filter);
+    const { data, meta } = await mealService.getAll_service(pagination, filter);
 
     const payload = {
       success: true,
       message: "Meal Data fetched successfully",
       data,
+      meta,
     };
     return sendResponse(res, httpStatus.OK, payload);
   } catch (error) {
