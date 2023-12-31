@@ -12,7 +12,7 @@ export const create_service = async (
 ): Promise<TNotifications | null> => {
   const isUser = await UserModel.findById(body.user);
 
-  if (!user) {
+  if (!isUser) {
     throw new ApiError(httpStatus.BAD_REQUEST, "Invalid user");
   }
 

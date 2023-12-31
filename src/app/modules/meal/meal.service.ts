@@ -8,6 +8,7 @@ import ApiError from "../../../ApiError";
 import httpStatus from "http-status";
 import MessModel from "../mess/mess.model";
 import UserModel from "../user/user.model";
+import NotificationsModel from "../notifications/notifications.model";
 
 const { ObjectId } = Types;
 
@@ -29,8 +30,7 @@ export const create_service = async (
   const { mess, activeMonth } = jwtPayload;
   const { date, meals } = payload;
 
-  console.log(meals);
-  const mealDocuments = await Promise.all(
+  const document = await Promise.all(
     meals.map(async ({ id, meal }) => {
       const isExist = await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(jwtPayload.mess) });
       if (!isExist) {
@@ -45,7 +45,24 @@ export const create_service = async (
       };
     })
   );
-  const meal = await MealModel.insertMany(mealDocuments);
+  const notificationData = await Promise.all(
+    meals.map(async ({ id, meal }) => {
+      const isExist = await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(jwtPayload.mess) });
+      if (!isExist) {
+        throw new ApiError(httpStatus.NOT_FOUND, `User not found with this id "${id}" in your mess`);
+      }
+
+      return {
+        user: new ObjectId(id),
+        message: `${meal} meal add on your account`,
+        manager: jwtPayload.userId,
+        month: jwtPayload.activeMonth,
+        mess: jwtPayload.mess,
+      };
+    })
+  );
+  await NotificationsModel.insertMany(notificationData);
+  const meal = await MealModel.insertMany(document);
   return meal;
 };
 
@@ -89,13 +106,23 @@ export const updateMeal_service = async (
     })
   );
 
-  // const bulkUpdateOperations: any = meals.map(({ id, meal }) => ({
-  //   updateOne: {
-  //     filter: { mess, activeMonth, user: id, date },
-  //     update: { $set: { meal } },
-  //     upsert: true,
-  //   },
-  // }));
+  const notificationData = await Promise.all(
+    meals.map(async ({ id, meal }) => {
+      const isExist = await UserModel.findOne({ _id: new ObjectId(id), mess: new ObjectId(jwtPayload.mess) });
+      if (!isExist) {
+        throw new ApiError(httpStatus.NOT_FOUND, `User not found with this id "${id}" in your mess`);
+      }
+
+      return {
+        user: new ObjectId(id),
+        message: `${meal} meal update on your account`,
+        manager: jwtPayload.userId,
+        month: jwtPayload.activeMonth,
+        mess: jwtPayload.mess,
+      };
+    })
+  );
+  await NotificationsModel.insertMany(notificationData);
 
   const meal = await MealModel.bulkWrite(bulkUpdateOperations);
 

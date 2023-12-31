@@ -82,7 +82,7 @@ export const getLast: RequestHandler = async (req, res, next) => {
 
 export const update: RequestHandler = async (req, res, next) => {
   try {
-    let data = await sharedCostService.update_service(req.params.id, req.body);
+    let data = await sharedCostService.update_service(req.params.id, req.body, req.user);
 
     const payload = {
       success: true,

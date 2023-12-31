@@ -2,12 +2,38 @@ import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces"
 import SharedCostModel from "./sharedCost.model";
 import { TSharedCost } from "./sharedCost.interface";
 import { JwtPayload } from "jsonwebtoken";
+import MessModel from "../mess/mess.model";
+import httpStatus from "http-status";
+import mongoose from "mongoose";
+import ApiError from "../../../ApiError";
+import NotificationsModel from "../notifications/notifications.model";
+
+const { ObjectId } = mongoose.Types;
 
 export const create_service = async (
   body: Partial<TSharedCost>,
   user: CustomJwtPayload | JwtPayload
 ): Promise<TSharedCost | null> => {
   const payload = { ...body, manager: user.userId, month: user.activeMonth, mess: user.mess };
+
+  const mess = await MessModel.findById(user.mess);
+  if (!mess) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "invalid mess");
+  }
+
+  const notificationData = await Promise.all(
+    mess.members?.map(async (id) => {
+      return {
+        user: new ObjectId(id as any),
+        message: `${body.amount} money expense on mess Shared cost for ${body.list}`,
+        manager: user.userId,
+        month: user.activeMonth,
+        mess: user.mess,
+      };
+    })
+  );
+  await NotificationsModel.insertMany(notificationData);
+
   const data = await SharedCostModel.create(payload);
   return data;
 };
@@ -42,14 +68,38 @@ export const getLast_service = async (user: JwtPayload | CustomJwtPayload): Prom
   return data;
 };
 
-export const update_service = async (id: string, payload: Partial<TSharedCost>): Promise<TSharedCost | null> => {
+export const update_service = async (
+  id: string,
+  payload: Partial<TSharedCost>,
+  user: JwtPayload | CustomJwtPayload
+): Promise<TSharedCost | null> => {
+  const mess = await MessModel.findById(user.mess);
+  if (!mess) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "invalid mess");
+  }
+
+  const prev = await SharedCostModel.findById(id);
+
+  const notificationData = await Promise.all(
+    mess.members?.map(async (id) => {
+      return {
+        user: new ObjectId(id as any),
+        message: `Shared Cost updated ${prev?.amount || 0} to ${payload.amount} for ${payload.list}`,
+        manager: user.userId,
+        month: user.activeMonth,
+        mess: user.mess,
+      };
+    })
+  );
+  await NotificationsModel.insertMany(notificationData);
+
   const data = await SharedCostModel.findByIdAndUpdate(id, payload, { new: true });
   return data;
 };
 
 export const remove_service = async (id: string): Promise<any> => {
   const data = await SharedCostModel.findByIdAndDelete(id);
-  console.log(data)
+  console.log(data);
   return data;
 };
 

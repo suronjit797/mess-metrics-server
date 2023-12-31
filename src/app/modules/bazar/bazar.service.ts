@@ -2,13 +2,39 @@ import { CustomJwtPayload, IPagination } from "../../../shared/globalInterfaces"
 import BazarModel from "./bazar.model";
 import { TBazar } from "./bazar.interface";
 import { JwtPayload } from "jsonwebtoken";
+import MessModel from "../mess/mess.model";
+import ApiError from "../../../ApiError";
+import httpStatus from "http-status";
+import mongoose from "mongoose";
+import NotificationsModel from "../notifications/notifications.model";
+
+const { ObjectId } = mongoose.Types;
 
 export const create_service = async (
   body: Partial<TBazar>,
   user: CustomJwtPayload | JwtPayload
 ): Promise<TBazar | null> => {
+  const mess = await MessModel.findById(user.mess);
+  if (!mess) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "invalid mess");
+  }
+
   const data = { ...body, manager: user.userId, month: user.activeMonth, mess: user.mess };
   const bazar = await BazarModel.create(data);
+
+  const notificationData = await Promise.all(
+    mess.members?.map(async (id) => {
+      return {
+        user: new ObjectId(id as any),
+        message: `${body.amount} money expense on mess bazar`,
+        manager: user.userId,
+        month: user.activeMonth,
+        mess: user.mess,
+      };
+    })
+  );
+  await NotificationsModel.insertMany(notificationData);
+
   return bazar;
 };
 
@@ -53,7 +79,31 @@ export const getLast_service = async (user: JwtPayload | CustomJwtPayload): Prom
   return data;
 };
 
-export const update_service = async (id: string, payload: Partial<TBazar>): Promise<TBazar | null> => {
+export const update_service = async (
+  id: string,
+  payload: Partial<TBazar>,
+  user: JwtPayload | CustomJwtPayload
+): Promise<TBazar | null> => {
+  const mess = await MessModel.findById(user.mess);
+  if (!mess) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "invalid mess");
+  }
+
+  const bazar = await BazarModel.findById(id);
+
+  const notificationData = await Promise.all(
+    mess.members?.map(async (id) => {
+      return {
+        user: new ObjectId(id as any),
+        message: `Bazar update ${bazar?.amount || 0} to ${payload.amount} `,
+        manager: user.userId,
+        month: user.activeMonth,
+        mess: user.mess,
+      };
+    })
+  );
+  await NotificationsModel.insertMany(notificationData);
+
   const data = await BazarModel.findByIdAndUpdate(id, payload, { new: true });
   return data;
 };
