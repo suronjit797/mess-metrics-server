@@ -18,7 +18,10 @@ export const getAll_service = async (pagination: IPagination, filter: any): Prom
     .limit(limit)
     .skip(skip)
     .sort(sortCondition)
-    .populate({ path: "user", select: "name email role", options: { sort: { name: 1 } } });
+    .populate([
+      { path: "user", select: "name email role", options: { sort: { name: 1 } } },
+      { path: "activeMonth", select: "name year isActive" },
+    ]);
   const total = await MealModel.countDocuments(filter);
   return { meta: { page, limit, total }, data };
 };
